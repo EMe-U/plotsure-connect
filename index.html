@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlotSure Connect - Verified Land Listings in Bugesera</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+     <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">PlotSure Connect</div>
+                <nav>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#listings">Listings</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="auth-buttons">
+                    <a href="#" class="btn btn-secondary" onclick="showModal('loginModal')">Broker Login</a>
+                    <a href="#" class="btn btn-primary" onclick="showModal('inquiryModal')">Inquire Now</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="container">
+            <h1>Verified Land Listings in Bugesera</h1>
+            <p>Combat land fraud with transparent, secure, and verified property listings</p>
+            <a href="#listings" class="btn btn-primary">Browse Verified Plots</a>
+            
+            <div class="trust-badge">
+                <h3>✅ 100% Verified Documentation</h3>
+                <p>Every listing includes official land titles, photos, and videos for complete transparency</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="search-section">
+        <div class="container">
+            <div class="search-form">
+                <input type="text" placeholder="Search by location..." id="searchLocation">
+                <select id="priceRange">
+                    <option value="">Price Range</option>
+                    <option value="0-5000000">Under 5M RWF</option>
+                    <option value="5000000-10000000">5M - 10M RWF</option>
+                    <option value="10000000-20000000">10M - 20M RWF</option>
+                    <option value="20000000+">Above 20M RWF</option>
+                </select>
+                <select id="landSize">
+                    <option value="">Land Size</option>
+                    <option value="0-500">Under 500 sqm</option>
+                    <option value="500-1000">500 - 1000 sqm</option>
+                    <option value="1000-2000">1000 - 2000 sqm</option>
+                    <option value="2000+">Above 2000 sqm</option>
+                </select>
+                <button class="btn btn-primary" onclick="searchListings()">Search</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="listings" class="listings-section">
+        <div class="container">
+            <h2 class="section-title">Featured Verified Listings</h2>
+            <div class="listings-grid" id="listingsGrid">
+                <!-- Listings will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">Why Choose PlotSure Connect?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <h3>100% Verified Documentation</h3>
+                    <p>Every listing includes scanned land titles and official documents to prevent fraud</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📸</div>
+                    <h3>Visual Proof</h3>
+                    <p>High-quality photos and videos of each plot for complete transparency</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Diaspora Friendly</h3>
+                    <p>Perfect for overseas buyers who need assurance before investing</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Fast & Secure</h3>
+                    <p>Quick inquiries and reservations with secure communication</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2 class="section-title">About PlotSure Connect</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Our Mission</h3>
+                    <p>To combat land fraud and improve trust in land transactions in Bugesera, Rwanda, by providing a transparent, secure platform that showcases verified land listings with complete documentation.</p>
+                    
+                    <h3>The Problem We Solve</h3>
+                    <p>According to the Rwanda Land Management Authority (2022), Bugesera is one of the districts experiencing a rise in land disputes and ownership conflicts. Land fraud and incomplete ownership records are persistent issues within Rwanda's real estate market. Many buyers fall victim to scams, false land claims, and inaccurate or outdated documentation.</p>
+                    
+                    <h3>Our Solution</h3>
+                    <p>PlotSure Connect is a digital platform where verified commission agents post authenticated land listings on behalf of landowners. Every listing includes:</p>
+                    <ul class="solution-list">
+                        <li>✅ Scanned official land ownership documents (plot titles/certificates)</li>
+                        <li>✅ High-quality photos and videos of the actual plot</li>
+                        <li>✅ Verified landowner information and permissions</li>
+                        <li>✅ Transparent pricing and plot specifications</li>
+                        <li>✅ Direct communication with trusted brokers</li>
+                    </ul>
+                    
+                    <h3>Built for Trust</h3>
+                    <p>We understand the challenges faced by buyers, especially those in the diaspora, when purchasing land remotely. Our platform ensures complete transparency, reducing fraud-related disputes and building confidence in land transactions throughout Bugesera.</p>
+                </div>
+                <div class="about-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Verified Listings</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Available Plots</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Support Available</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2 class="section-title">Contact Us</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Get in Touch</h3>
+                    <p>Have questions about a specific plot or need assistance with your land purchase? We're here to help!</p>
+                    
+                    <div class="contact-methods">
+                        <div class="contact-method">
+                            <div class="contact-icon">📧</div>
+                            <div class="contact-details">
+                                <h4>Email</h4>
+                                <p>info@plotsureconnect.rw</p>
+                                <p>support@plotsureconnect.rw</p>
+                            </div>
+                        </div>
+                        <div class="contact-method">
+                            <div class="contact-icon">📞</div>
+                            <div class="contact-details">
+                                <h4>Phone</h4>
+                                <p>+250 788 XXX XXX</p>
+                                <p>+250 722 XXX XXX</p>
+                            </div>
+                        </div>
+                        <div class="contact-method">
+                            <div class="contact-icon">📍</div>
+                            <div class="contact-details">
+                                <h4>Office Location</h4>
+                                <p>Nyamata, Bugesera District</p>
+                                <p>Eastern Province, Rwanda</p>
+                            </div>
+                        </div>
+                        <div class="contact-method">
+                            <div class="contact-icon">🕒</div>
+                            <div class="contact-details">
+                                <h4>Business Hours</h4>
+                                <p>Monday - Friday: 8:00 AM - 6:00 PM</p>
+                                <p>Saturday: 9:00 AM - 4:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-form-section">
+                    <h3>Send us a Message</h3>
+                    <form class="contact-form" onsubmit="handleContactForm(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contactName">Full Name *</label>
+                                <input type="text" id="contactName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactEmail">Email Address *</label>
+                                <input type="email" id="contactEmail" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contactPhone">Phone Number</label>
+                                <input type="tel" id="contactPhone">
+                            </div>
+                            <div class="form-group">
+                                <label for="contactSubject">Subject *</label>
+                                <select id="contactSubject" required>
+                                    <option value="">Select a subject</option>
+                                    <option value="general-inquiry">General Inquiry</option>
+                                    <option value="plot-interest">Interest in Specific Plot</option>
+                                    <option value="broker-services">Broker Services</option>
+                                    <option value="technical-support">Technical Support</option>
+                                    <option value="partnership">Partnership Inquiry</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactMessage">Message *</label>
+                            <textarea id="contactMessage" rows="5" placeholder="Please provide details about your inquiry..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>PlotSure Connect</h3>
+                    <p>Fighting land fraud in Bugesera through transparency and verification</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#listings">Listings</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <p>📧 info@plotsureconnect.rw</p>
+                    <p>📞 +250 xxx xxx xxx</p>
+                    <p>📍 Bugesera, Rwanda</p>
+                </div>
+            </div>
+            <p>&copy; 2025 PlotSure Connect. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Broker Login</h2>
+                <button class="close-modal" onclick="hideModal('loginModal')">&times;</button>
+            </div>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Inquiry Modal -->
+    <div id="inquiryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Land Inquiry</h2>
+                <button class="close-modal" onclick="hideModal('inquiryModal')">&times;</button>
+            </div>
+            <form onsubmit="handleInquiry(event)">
+                <div class="form-group">
+                    <label for="inquiryName">Full Name:</label>
+                    <input type="text" id="inquiryName" required>
+                </div>
+                <div class="form-group">
+                    <label for="inquiryEmail">Email:</label>
+                    <input type="email" id="inquiryEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="inquiryPhone">Phone:</label>
+                    <input type="tel" id="inquiryPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="inquiryMessage">Message:</label>
+                    <textarea id="inquiryMessage" placeholder="Please specify which plot you're interested in and any questions you have..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Inquiry</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Listing Details Modal -->
+    <div id="listingDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="listingModalTitle">Plot Details</h2>
+                <button class="close-modal" onclick="hideModal('listingDetailsModal')">&times;</button>
+            </div>
+            <div id="listingModalContent">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample listing data
+        const sampleListings = [
+            {
+                id: 1,
+                title: "Prime Residential Plot",
+                location: "Nyamata, Bugesera",
+                price: "8,500,000 RWF",
+                size: "800 sqm",
+                features: ["Residential", "Water Access", "Road Access", "Title Deed"],
+                description: "Beautiful residential plot in a developing area with excellent road access and utilities nearby.",
+                verified: true,
+                images: ["plot1.jpg"],
+                documents: ["title_deed.pdf"]
+            },
+            {
+                id: 2,
+                title: "Commercial Land Opportunity",
+                location: "Rilima, Bugesera",
+                price: "15,000,000 RWF",
+                size: "1,200 sqm",
+                features: ["Commercial", "Main Road", "Electricity", "Title Deed"],
+                description: "Excellent commercial plot on main road, perfect for business development.",
+                verified: true,
+                images: ["plot2.jpg"],
+                documents: ["title_deed.pdf", "survey_report.pdf"]
+            },
+            {
+                id: 3,
+                title: "Agricultural Land",
+                location: "Kamabuye, Bugesera",
+                price: "12,000,000 RWF",
+                size: "2,000 sqm",
+                features: ["Agricultural", "Fertile Soil", "Water Source", "Title Deed"],
+                description: "Fertile agricultural land with water access, perfect for farming or future development.",
+                verified: true,
+                images: ["plot3.jpg"],
+                documents: ["title_deed.pdf"]
+            }
+        ];
+
+        // Populate listings
+        function populateListings(listings = sampleListings) {
+            const grid = document.getElementById('listingsGrid');
+            grid.innerHTML = '';
+
+            listings.forEach(listing => {
+                const listingCard = document.createElement('div');
+                listingCard.className = 'listing-card';
+                listingCard.innerHTML = `
+                    <div class="listing-image">
+                        🏞️
+                        <div class="verified-badge">✅ Verified</div>
+                    </div>
+                    <div class="listing-content">
+                        <h3 class="listing-title">${listing.title}</h3>
+                        <div class="listing-location">${listing.location}</div>
+                        <div class="listing-details">
+                            <div class="listing-price">${listing.price}</div>
+                            <div class="listing-size">${listing.size}</div>
+                        </div>
+                        <div class="listing-features">
+                            ${listing.features.map(feature => `<span class="feature-tag">${feature}</span>`).join('')}
+                        </div>
+                        <div class="listing-actions">
+                            <button class="btn btn-outline btn-small" onclick="viewListing(${listing.id})">View Details</button>
+                            <button class="btn btn-primary btn-small" onclick="reservePlot(${listing.id})">Reserve Plot</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(listingCard);
+            });
+        }
+
+        // Search functionality
+        function searchListings() {
+            const location = document.getElementById('searchLocation').value.toLowerCase();
+            const priceRange = document.getElementById('priceRange').value;
+            const landSize = document.getElementById('landSize').value;
+
+            let filteredListings = sampleListings;
+
+            if (location) {
+                filteredListings = filteredListings.filter(listing => 
+                    listing.location.toLowerCase().includes(location)
+                );
+            }
+
+            // Add price and size filtering logic here
+            populateListings(filteredListings);
+        }
+
+        // Modal functions
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // View listing details
+        function viewListing(id) {
+            const listing = sampleListings.find(l => l.id === id);
+            if (listing) {
+                document.getElementById('listingModalTitle').textContent = listing.title;
+                document.getElementById('listingModalContent').innerHTML = `
+                    <div class="listing-image" style="height: 250px; margin-bottom: 1rem;">
+                        🏞️
+                        <div class="verified-badge">✅ Verified</div>
+                    </div>
+                    <h3>${listing.title}</h3>
+                    <p><strong>Location:</strong> ${listing.location}</p>
+                    <p><strong>Price:</strong> ${listing.price}</p>
+                    <p><strong>Size:</strong> ${listing.size}</p>
+                    <p><strong>Description:</strong> ${listing.description}</p>
+                    <div style="margin: 1rem 0;">
+                        <strong>Features:</strong>
+                        <div class="listing-features">
+                            ${listing.features.map(feature => `<span class="feature-tag">${feature}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div style="margin: 1rem 0;">
+                        <strong>Documents:</strong>
+                        <ul>
+                            ${listing.documents.map(doc => `<li>📄 ${doc}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-primary" onclick="reservePlot(${listing.id})">Reserve This Plot</button>
+                        <button class="btn btn-outline" onclick="hideModal('listingDetailsModal'); showModal('inquiryModal')">Send Inquiry</button>
+                    </div>
+                `;
+                showModal('listingDetailsModal');
+            }
+        }
+
+        // Reserve plot
+        function reservePlot(id) {
+            const listing = sampleListings.find(l => l.id === id);
+            if (listing) {
+                alert(`Reservation request for "${listing.title}" has been sent to the broker. You will receive a confirmation email shortly.`);
+                // In a real app, this would send data to the backend
+            }
+        }
+
+        // Handle login
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // In a real app, this would authenticate with the backend
+            alert('Login functionality will be implemented in the backend. For demo purposes, this shows the UI.');
+            hideModal('loginModal');
+        }
+
+        // Handle inquiry
+        function handleInquiry(event) {
+            event.preventDefault();
+            const name = document.getElementById('inquiryName').value;
+            const email = document.getElementById('inquiryEmail').value;
+            const phone = document.getElementById('inquiryPhone').value;
+            const message = document.getElementById('inquiryMessage').value;
+            
+            // In a real app, this would send data to the backend
+            alert(`Thank you ${name}! Your inquiry has been sent to the broker. You will receive a response within 24 hours.`);
+            hideModal('inquiryModal');
+            
+            // Reset form
+            event.target.reset();
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modals = document.getElementsByClassName('modal');
+            for (let modal of modals) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        }
+
+        // Handle contact form
+        function handleContactForm(event) {
+            event.preventDefault();
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const phone = document.getElementById('contactPhone').value;
+            const subject = document.getElementById('contactSubject').value;
+            const message = document.getElementById('contactMessage').value;
+            
+            // In a real app, this would send data to the backend
+            alert(`Thank you ${name}! Your message has been sent successfully. We'll get back to you within 24 hours.`);
+            
+            // Reset form
+            event.target.reset();
+        }
+
+        // Smooth scrolling for navigation links
+        function smoothScrollTo(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+
+        // Handle navigation clicks
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click listeners to navigation links
+            const navLinks = document.querySelectorAll('nav a[href^="#"]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    smoothScrollTo(targetId);
+                });
+            });
+            
+            populateListings();
+        });
+    </script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
