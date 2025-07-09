@@ -25,7 +25,7 @@ body {
     width: 100%;
     height: 100%;
     background: rgba(255, 255, 255, 0.9);
-    display: flex;
+    display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -149,15 +149,6 @@ nav a:hover {
     color: white;
 }
 
-.btn-danger {
-    background: #ef4444;
-    color: white;
-}
-
-.btn-danger:hover:not(:disabled) {
-    background: #dc2626;
-}
-
 /* Hero Section */
 .hero {
     background: linear-gradient(135deg, #1e3a8a, #3b82f6);
@@ -244,7 +235,6 @@ nav a:hover {
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     transition: transform 0.3s, box-shadow 0.3s;
-    position: relative;
 }
 
 .listing-card:hover {
@@ -347,40 +337,6 @@ nav a:hover {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
     flex: 1;
-}
-
-/* Pagination */
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 2rem;
-}
-
-.pagination button {
-    padding: 0.5rem 1rem;
-    border: 1px solid #e5e7eb;
-    background: white;
-    color: #374151;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.pagination button:hover:not(:disabled) {
-    background: #f3f4f6;
-}
-
-.pagination button.active {
-    background: #3b82f6;
-    color: white;
-    border-color: #3b82f6;
-}
-
-.pagination button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
 }
 
 /* Features Section */
@@ -601,10 +557,6 @@ nav a:hover {
     overflow-y: auto;
 }
 
-.listing-modal {
-    max-width: 800px;
-}
-
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -630,44 +582,6 @@ nav a:hover {
 
 .close-modal:hover {
     color: #374151;
-}
-
-/* Message Container */
-.message-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 10000;
-}
-
-.message {
-    background: white;
-    border-left: 4px solid #10b981;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 6px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    min-width: 300px;
-    animation: slideIn 0.3s ease-out;
-}
-
-.message.error {
-    border-left-color: #ef4444;
-}
-
-.message.warning {
-    border-left-color: #f59e0b;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
 }
 
 /* Footer */
@@ -708,164 +622,6 @@ footer {
 
 .footer-links a:hover {
     opacity: 1;
-}
-
-/* Listing Details */
-.listing-gallery {
-    margin-bottom: 2rem;
-}
-
-.gallery-main {
-    width: 100%;
-    height: 300px;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.gallery-main img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.gallery-thumbnails {
-    display: flex;
-    gap: 0.5rem;
-    overflow-x: auto;
-}
-
-.gallery-thumbnail {
-    width: 80px;
-    height: 60px;
-    border-radius: 4px;
-    overflow: hidden;
-    cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.3s;
-}
-
-.gallery-thumbnail:hover,
-.gallery-thumbnail.active {
-    opacity: 1;
-}
-
-.gallery-thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.listing-info {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 2rem;
-}
-
-.listing-description {
-    line-height: 1.7;
-}
-
-.listing-details-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin: 1rem 0;
-}
-
-.detail-item {
-    padding: 0.5rem;
-    background: #f8fafc;
-    border-radius: 6px;
-}
-
-.detail-label {
-    font-weight: 600;
-    color: #374151;
-    margin-bottom: 0.25rem;
-}
-
-.detail-value {
-    color: #6b7280;
-}
-
-.documents-list {
-    margin-top: 1rem;
-}
-
-.document-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    background: #f8fafc;
-    border-radius: 6px;
-    margin-bottom: 0.5rem;
-}
-
-.document-icon {
-    color: #ef4444;
-}
-
-.document-verified {
-    color: #10b981;
-    font-size: 0.8rem;
-}
-
-/* Loading states */
-.skeleton {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-}
-
-@keyframes loading {
-    0% {
-        background-position: 200% 0;
-    }
-    100% {
-        background-position: -200% 0;
-    }
-}
-
-.skeleton-text {
-    height: 1rem;
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
-}
-
-.skeleton-title {
-    height: 1.5rem;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-}
-
-.skeleton-image {
-    height: 200px;
-    border-radius: 8px;
-}
-
-/* Error states */
-.error-state {
-    text-align: center;
-    padding: 2rem;
-    color: #6b7280;
-}
-
-.error-state h3 {
-    color: #ef4444;
-    margin-bottom: 1rem;
-}
-
-.empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: #6b7280;
-}
-
-.empty-state h3 {
-    color: #374151;
-    margin-bottom: 1rem;
 }
 
 /* Responsive Design */
@@ -911,21 +667,6 @@ footer {
         gap: 2rem;
     }
 
-    .about-stats {
-        flex-direction: row;
-        justify-content: space-around;
-    }
-
-    .stat-card {
-        flex: 1;
-        margin: 0 0.5rem;
-        padding: 1rem;
-    }
-
-    .stat-number {
-        font-size: 1.8rem;
-    }
-
     .contact-content {
         grid-template-columns: 1fr;
         gap: 2rem;
@@ -935,53 +676,7 @@ footer {
         grid-template-columns: 1fr;
     }
 
-    .modal-content {
-        width: 95%;
-        padding: 1rem;
-    }
-
-    .listing-info {
-        grid-template-columns: 1fr;
-    }
-
-    .listing-details-grid {
-        grid-template-columns: 1fr;
-    }
-
     .footer-content {
         text-align: center;
-    }
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding: 0 15px;
-    }
-
-    .hero {
-        padding: 2rem 0;
-    }
-
-    .hero h1 {
-        font-size: 1.8rem;
-    }
-
-    .section-title {
-        font-size: 2rem;
-    }
-
-    .listings-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .pagination {
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-    .pagination button {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.9rem;
     }
 }
