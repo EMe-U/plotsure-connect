@@ -1,123 +1,161 @@
 module.exports = (sequelize, DataTypes) => {
-  const Listing = sequelize.define('Listing', {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    title: {
-      type: DataTypes.STRING(200),
-      allowNull: false,
-      validate: {
-        notEmpty: { msg: 'Listing title is required' }
-      }
-    },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-      validate: {
-        notEmpty: { msg: 'Description is required' }
-      }
-    },
-    district: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
-      defaultValue: 'Bugesera'
-    },
-    sector: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    cell: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    village: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    price_amount: {
-      type: DataTypes.DECIMAL(15, 2),
-      allowNull: false,
-      validate: {
-        min: { args: 0, msg: 'Price cannot be negative' }
-      }
-    },
-    price_currency: {
-      type: DataTypes.ENUM('RWF', 'USD'),
-      defaultValue: 'RWF'
-    },
-    land_size_value: {
-      type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
-      validate: {
-        min: { args: 1, msg: 'Land size must be positive' }
-      }
-    },
-    land_size_unit: {
-      type: DataTypes.ENUM('sqm', 'hectares', 'acres'),
-      defaultValue: 'sqm'
-    },
-    land_type: {
-      type: DataTypes.ENUM('residential', 'commercial', 'agricultural', 'industrial', 'mixed'),
-      allowNull: false
-    },
-    broker_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'users',
-        key: 'id'
-      }
-    },
-    status: {
-      type: DataTypes.ENUM('draft', 'active', 'reserved', 'sold', 'withdrawn'),
-      defaultValue: 'draft'
-    },
-    is_verified: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    featured: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    views_count: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0
-    },
-    inquiries_count: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0
-    },
-    has_road_access: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true
-    },
-    has_electricity: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    has_water: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    landowner_name: {
-      type: DataTypes.STRING(200),
-      allowNull: false
-    },
-    landowner_phone: {
-      type: DataTypes.STRING(20),
-      allowNull: false
-    },
-    landowner_id_number: {
-      type: DataTypes.STRING(50),
-      allowNull: false
-    }
-  }, {
-    tableName: 'listings',
-    timestamps: true
-  });
+    const Listing = sequelize.define('Listing', {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
+        user_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'users',
+                key: 'id'
+            }
+        },
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                notEmpty: true,
+                len: [5, 200]
+            }
+        },
+        description: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            validate: {
+                notEmpty: true
+            }
+        },
+        location: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                notEmpty: true
+            }
+        },
+        sector: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        cell: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        village: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        plot_size: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+            validate: {
+                min: 0
+            }
+        },
+        plot_size_unit: {
+            type: DataTypes.ENUM('sqm', 'hectares', 'acres'),
+            defaultValue: 'sqm'
+        },
+        price: {
+            type: DataTypes.DECIMAL(15, 2),
+            allowNull: false,
+            validate: {
+                min: 0
+            }
+        },
+        price_negotiable: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        land_type: {
+            type: DataTypes.ENUM('residential', 'commercial', 'agricultural', 'industrial', 'mixed'),
+            allowNull: false
+        },
+        land_title_available: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
+        },
+        status: {
+            type: DataTypes.ENUM('available', 'reserved', 'sold'),
+            defaultValue: 'available'
+        },
+        featured: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        verified: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        views: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0
+        },
+        landowner_name: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        landowner_phone: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        commission_percentage: {
+            type: DataTypes.FLOAT,
+            defaultValue: 5.0,
+            validate: {
+                min: 0,
+                max: 100
+            }
+        },
+        plot_number: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        upi_number: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        documents: {
+            type: DataTypes.JSON,
+            defaultValue: []
+        },
+        photos: {
+            type: DataTypes.JSON,
+            defaultValue: []
+        },
+        videos: {
+            type: DataTypes.JSON,
+            defaultValue: []
+        },
+        amenities: {
+            type: DataTypes.JSON,
+            defaultValue: []
+        },
+        nearby_facilities: {
+            type: DataTypes.JSON,
+            defaultValue: []
+        }
+    }, {
+        tableName: 'listings',
+        timestamps: true,
+        underscored: true,
+        indexes: [
+            {
+                fields: ['status']
+            },
+            {
+                fields: ['location']
+            },
+            {
+                fields: ['land_type']
+            },
+            {
+                fields: ['price']
+            }
+        ]
+    });
 
-  return Listing;
+    return Listing;
 };
