@@ -6,6 +6,8 @@ const User = require('./User')(sequelize, DataTypes);
 const Listing = require('./Listing')(sequelize, DataTypes);
 const Inquiry = require('./Inquiry')(sequelize, DataTypes);
 const Contact = require('./Contact')(sequelize, DataTypes);
+const Document = require('./Document')(sequelize, DataTypes);
+const Media = require('./ Media')(sequelize, DataTypes);
 
 // Define associations
 User.hasMany(Listing, {
@@ -28,11 +30,35 @@ Inquiry.belongsTo(Listing, {
     as: 'listing'
 });
 
+// Document associations
+Listing.hasMany(Document, {
+    foreignKey: 'listing_id',
+    as: 'documents'
+});
+
+Document.belongsTo(Listing, {
+    foreignKey: 'listing_id',
+    as: 'listing'
+});
+
+// Media associations
+Listing.hasMany(Media, {
+    foreignKey: 'listing_id',
+    as: 'media'
+});
+
+Media.belongsTo(Listing, {
+    foreignKey: 'listing_id',
+    as: 'listing'
+});
+
 // Export models and sequelize instance
 module.exports = {
     sequelize,
     User,
     Listing,
     Inquiry,
-    Contact
+    Contact,
+    Document,
+    Media
 };
