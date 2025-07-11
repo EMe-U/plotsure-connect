@@ -7,7 +7,7 @@ const Listing = require('./Listing')(sequelize, DataTypes);
 const Inquiry = require('./Inquiry')(sequelize, DataTypes);
 const Contact = require('./Contact')(sequelize, DataTypes);
 const Document = require('./Document')(sequelize, DataTypes);
-const Media = require('./ Media')(sequelize, DataTypes);
+const Media = require('./Media')(sequelize, DataTypes);
 
 // Define associations
 User.hasMany(Listing, {
