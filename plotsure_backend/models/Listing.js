@@ -117,18 +117,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
-        documents: {
-            type: DataTypes.JSON,
-            defaultValue: []
-        },
-        photos: {
-            type: DataTypes.JSON,
-            defaultValue: []
-        },
-        videos: {
-            type: DataTypes.JSON,
-            defaultValue: []
-        },
+
         amenities: {
             type: DataTypes.JSON,
             defaultValue: []
