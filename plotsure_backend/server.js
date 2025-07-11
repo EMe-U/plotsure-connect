@@ -72,8 +72,8 @@ app.get('/api/health', async (req, res) => {
     }
 });
 
-// Serve static files from the frontend directory
-app.use(express.static(path.join(__dirname, '../plotsure_frontend')));
+// Serve static files from the root directory where index.html is located
+app.use(express.static(path.join(__dirname, '..')));
 app.use('/plotsure_frontend', express.static(path.join(__dirname, '../plotsure_frontend')));
 
 // API 404 handler - must come before the catch-all route
@@ -86,7 +86,7 @@ app.use('/api/*', (req, res) => {
 
 // Catch-all route to serve index.html for frontend routes
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../plotsure_frontend/index.html'));
+    res.sendFile(path.join(__dirname, '../index.html'));
 });
 
 // Global error handler
@@ -141,7 +141,8 @@ const startServer = async () => {
             console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
             console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
             console.log(`🌐 Frontend URL: http://localhost:${PORT}`);
-            console.log(`📁 Serving frontend from: ${path.join(__dirname, '../plotsure_frontend')}`);
+            console.log(`📁 Serving frontend from: ${path.join(__dirname, '..')}`);
+            console.log(`📄 Index.html location: ${path.join(__dirname, '../index.html')}`);
         });
     } catch (error) {
         console.error('❌ Unable to start server:', error);
