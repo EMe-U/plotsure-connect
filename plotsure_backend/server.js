@@ -18,7 +18,8 @@ const app = express();
 
 // Security middleware
 app.use(helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" }
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    contentSecurityPolicy: false, // Disable CSP for development
 }));
 
 // Rate limiting
@@ -71,12 +72,21 @@ app.get('/api/health', async (req, res) => {
     }
 });
 
-// Handle 404 errors
-app.use('*', (req, res) => {
+// Serve static files from the frontend directory
+app.use(express.static(path.join(__dirname, '../plotsure_frontend')));
+app.use('/plotsure_frontend', express.static(path.join(__dirname, '../plotsure_frontend')));
+
+// API 404 handler - must come before the catch-all route
+app.use('/api/*', (req, res) => {
     res.status(404).json({
         success: false,
         message: 'API endpoint not found'
     });
+});
+
+// Catch-all route to serve index.html for frontend routes
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../plotsure_frontend/index.html'));
 });
 
 // Global error handler
@@ -130,6 +140,8 @@ const startServer = async () => {
             console.log(`🚀 PlotSure Connect API Server running on port ${PORT}`);
             console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
             console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+            console.log(`🌐 Frontend URL: http://localhost:${PORT}`);
+            console.log(`📁 Serving frontend from: ${path.join(__dirname, '../plotsure_frontend')}`);
         });
     } catch (error) {
         console.error('❌ Unable to start server:', error);
