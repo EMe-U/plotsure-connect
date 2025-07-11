@@ -74,5 +74,34 @@ module.exports = (sequelize, DataTypes) => {
         ]
     });
 
+    // Hash password before saving
+    User.beforeCreate(async (user) => {
+        if (user.password) {
+            const bcrypt = require('bcryptjs');
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(user.password, salt);
+        }
+    });
+
+    User.beforeUpdate(async (user) => {
+        if (user.changed('password')) {
+            const bcrypt = require('bcryptjs');
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(user.password, salt);
+        }
+    });
+
+    // Instance method to compare password
+    User.prototype.comparePassword = async function(candidatePassword) {
+        const bcrypt = require('bcryptjs');
+        return await bcrypt.compare(candidatePassword, this.password);
+    };
+
+    // Instance method to update last login
+    User.prototype.updateLastLogin = async function() {
+        this.last_login = new Date();
+        await this.save();
+    };
+
     return User;
 };
