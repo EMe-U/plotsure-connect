@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Broker Dashboard - PlotSure Connect</title>
+    <link rel="stylesheet" href="../plotsure_frontend/assets/css/dashboard.css">
+    <meta name="description" content="Broker dashboard for managing land listings and inquiries">
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">🏞️</span>
+                    <span class="logo-text">PlotSure</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active" data-page="overview">
+                        <a href="#overview">
+                            <span class="nav-icon">📊</span>
+                            <span class="nav-text">Overview</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-page="listings">
+                        <a href="#listings">
+                            <span class="nav-icon">🏞️</span>
+                            <span class="nav-text">My Listings</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-page="inquiries">
+                        <a href="#inquiries">
+                            <span class="nav-icon">💬</span>
+                            <span class="nav-text">Inquiries</span>
+                            <span class="nav-badge" id="inquiryBadge">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-page="contacts">
+                        <a href="#contacts">
+                            <span class="nav-icon">📧</span>
+                            <span class="nav-text">Contact Messages</span>
+                            <span class="nav-badge" id="contactBadge">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-page="profile">
+                        <a href="#profile">
+                            <span class="nav-icon">👤</span>
+                            <span class="nav-text">Profile</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info" id="userInfo">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Loading...</div>
+                        <div class="user-role" id="userRole">Broker</div>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <span class="logout-icon">🚪</span>
+                    <span class="logout-text">Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
+                    <h1 class="page-title" id="pageTitle">Dashboard Overview</h1>
+                </div>
+                <div class="top-bar-right">
+                    <button class="notification-btn" id="notificationBtn">
+                        🔔
+                        <span class="notification-badge" id="notificationBadge">0</span>
+                    </button>
+                    <a href="../index.html" class="view-site-btn">View Site</a>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Overview Page -->
+                <div class="page-content active" id="overviewPage">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">🏞️</div>
+                            <div class="stat-info">
+                                <div class="stat-number" id="totalListings">0</div>
+                                <div class="stat-label">Total Listings</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">✅</div>
+                            <div class="stat-info">
+                                <div class="stat-number" id="activeListings">0</div>
+                                <div class="stat-label">Active Listings</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">👀</div>
+                            <div class="stat-info">
+                                <div class="stat-number" id="totalViews">0</div>
+                                <div class="stat-label">Total Views</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💬</div>
+                            <div class="stat-info">
+                                <div class="stat-number" id="totalInquiries">0</div>
+                                <div class="stat-label">Total Inquiries</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>Recent Inquiries</h3>
+                                <a href="#inquiries" class="view-all-btn">View All</a>
+                            </div>
+                            <div class="card-content" id="recentInquiries">
+                                <div class="loading-message">Loading inquiries...</div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>Recent Listings</h3>
+                                <a href="#listings" class="view-all-btn">View All</a>
+                            </div>
+                            <div class="card-content" id="recentListings">
+                                <div class="loading-message">Loading listings...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Listings Page -->
+                <div class="page-content" id="listingsPage">
+                    <div class="page-header">
+                        <h2>My Listings</h2>
+                        <button class="btn btn-primary" onclick="showCreateListingModal()">
+                            <span>➕</span> Create New Listing
+                        </button>
+                    </div>
+
+                    <div class="filters-section">
+                        <div class="filters-row">
+                            <select id="statusFilter" onchange="filterListings()">
+                                <option value="">All Status</option>
+                                <option value="draft">Draft</option>
+                                <option value="active">Active</option>
+                                <option value="reserved">Reserved</option>
+                                <option value="sold">Sold</option>
+                            </select>
+                            <input type="text" id="searchListings" placeholder="Search listings..." onchange="filterListings()">
+                        </div>
+                    </div>
+
+                    <div class="listings-container" id="listingsContainer">
+                        <div class="loading-message">Loading your listings...</div>
+                    </div>
+
+                    <div class="pagination" id="listingsPagination"></div>
+                </div>
+
+                <!-- Inquiries Page -->
+                <div class="page-content" id="inquiriesPage">
+                    <div class="page-header">
+                        <h2>Customer Inquiries</h2>
+                    </div>
+
+                    <div class="filters-section">
+                        <div class="filters-row">
+                            <select id="inquiryStatusFilter" onchange="filterInquiries()">
+                                <option value="">All Status</option>
+                                <option value="new">New</option>
+                                <option value="contacted">Contacted</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="responded">Responded</option>
+                                <option value="closed">Closed</option>
+                            </select>
+                            <select id="inquiryPriorityFilter" onchange="filterInquiries()">
+                                <option value="">All Priority</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="inquiries-container" id="inquiriesContainer">
+                        <div class="loading-message">Loading inquiries...</div>
+                    </div>
+
+                    <div class="pagination" id="inquiriesPagination"></div>
+                </div>
+
+                <!-- Contacts Page -->
+                <div class="page-content" id="contactsPage">
+                    <div class="page-header">
+                        <h2>Contact Messages</h2>
+                    </div>
+
+                    <div class="filters-section">
+                        <div class="filters-row">
+                            <select id="contactStatusFilter" onchange="filterContacts()">
+                                <option value="">All Status</option>
+                                <option value="new">New</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="responded">Responded</option>
+                                <option value="closed">Closed</option>
+                            </select>
+                            <select id="contactPriorityFilter" onchange="filterContacts()">
+                                <option value="">All Priority</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="contacts-container" id="contactsContainer">
+                        <div class="loading-message">Loading contact messages...</div>
+                    </div>
+
+                    <div class="pagination" id="contactsPagination"></div>
+                </div>
+
+                <!-- Profile Page -->
+                <div class="page-content" id="profilePage">
+                    <div class="page-header">
+                        <h2>Profile Settings</h2>
+                    </div>
+
+                    <div class="profile-container">
+                        <div class="profile-card">
+                            <div class="profile-header">
+                                <div class="profile-avatar">👤</div>
+                                <div class="profile-info">
+                                    <h3 id="profileName">Loading...</h3>
+                                    <p id="profileEmail">Loading...</p>
+                                    <span class="profile-role" id="profileRole">Broker</span>
+                                </div>
+                            </div>
+
+                            <form id="profileForm" class="profile-form">
+                                <div class="form-group">
+                                    <label for="updateName">Full Name</label>
+                                    <input type="text" id="updateName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="updateEmail">Email Address</label>
+                                    <input type="email" id="updateEmail" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="updatePhone">Phone Number</label>
+                                    <input type="tel" id="updatePhone">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Profile</button>
+                            </form>
+                        </div>
+
+                        <div class="password-card">
+                            <h3>Change Password</h3>
+                            <form id="passwordForm" class="password-form">
+                                <div class="form-group">
+                                    <label for="currentPassword">Current Password</label>
+                                    <input type="password" id="currentPassword" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newPassword">New Password</label>
+                                    <input type="password" id="newPassword" required minlength="6">
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword">Confirm New Password</label>
+                                    <input type="password" id="confirmPassword" required>
+                                </div>
+                                <button type="submit" class="btn btn-secondary">Change Password</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Create Listing Modal -->
+    <div id="createListingModal" class="modal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h2>Create New Listing</h2>
+                <button class="close-modal" onclick="hideModal('createListingModal')">&times;</button>
+            </div>
+            <form id="createListingForm" class="create-listing-form">
+                <div class="form-sections">
+                    <!-- Basic Information -->
+                    <div class="form-section">
+                        <h3>Basic Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="listingTitle">Title *</label>
+                                <input type="text" id="listingTitle" required maxlength="200">
+                            </div>
+                            <div class="form-group">
+                                <label for="landType">Land Type *</label>
+                                <select id="landType" required>
+                                    <option value="">Select type</option>
+                                    <option value="residential">Residential</option>
+                                    <option value="commercial">Commercial</option>
+                                    <option value="agricultural">Agricultural</option>
+                                    <option value="industrial">Industrial</option>
+                                    <option value="mixed">Mixed Use</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="listingDescription">Description *</label>
+                            <textarea id="listingDescription" required rows="4" maxlength="2000"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Location Information -->
+                    <div class="form-section">
+                        <h3>Location</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="district">District *</label>
+                                <select id="district" required>
+                                    <option value="Bugesera">Bugesera</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="sector">Sector *</label>
+                                <input type="text" id="sector" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cell">Cell *</label>
+                                <input type="text" id="cell" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="village">Village *</label>
+                                <input type="text" id="village" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Size and Price -->
+                    <div class="form-section">
+                        <h3>Size and Price</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="landSizeValue">Land Size *</label>
+                                <input type="number" id="landSizeValue" required min="1" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="landSizeUnit">Unit *</label>
+                                <select id="landSizeUnit" required>
+                                    <option value="sqm">Square Meters</option>
+                                    <option value="hectares">Hectares</option>
+                                    <option value="acres">Acres</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="priceAmount">Price *</label>
+                                <input type="number" id="priceAmount" required min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="priceCurrency">Currency *</label>
+                                <select id="priceCurrency" required>
+                                    <option value="RWF">RWF</option>
+                                    <option value="USD">USD</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="priceNegotiable">
+                                Price is negotiable
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Landowner Information -->
+                    <div class="form-section">
+                        <h3>Landowner Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="landownerName">Landowner Name *</label>
+                                <input type="text" id="landownerName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="landownerPhone">Landowner Phone *</label>
+                                <input type="tel" id="landownerPhone" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="landownerIdNumber">ID Number *</label>
+                            <input type="text" id="landownerIdNumber" required>
+                        </div>
+                    </div>
+
+                    <!-- Files Upload -->
+                    <div class="form-section">
+                        <h3>Documents and Media</h3>
+                        <div class="upload-section">
+                            <div class="form-group">
+                                <label for="documents">Documents (PDF, DOC)</label>
+                                <input type="file" id="documents" multiple accept=".pdf,.doc,.docx">
+                                <small>Upload land title, ownership certificate, survey report, etc.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="images">Images (JPG, PNG)</label>
+                                <input type="file" id="images" multiple accept="image/*">
+                                <small>Upload photos of the land</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="videos">Videos (MP4)</label>
+                                <input type="file" id="videos" multiple accept="video/*">
+                                <small>Upload video tours of the land</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="hideModal('createListingModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Listing</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Inquiry Detail Modal -->
+    <div id="inquiryDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Inquiry Details</h2>
+                <button class="close-modal" onclick="hideModal('inquiryDetailModal')">&times;</button>
+            </div>
+            <div id="inquiryDetailContent">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div id="messageContainer" class="message-container"></div>
+
+    <!-- JavaScript -->
+    <script src="../plotsure_frontend/assets/js/config.js"></script>
+    <script src="../plotsure_frontend/assets/js/api.js"></script>
+    <script src="../plotsure_frontend/assets/js/auth.js"></script>
+    <script src="../plotsure_frontend/assets/js/dashboard.js"></script>
+</body>
+</html>
