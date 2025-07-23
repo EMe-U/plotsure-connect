@@ -60,6 +60,24 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'API is healthy' });
 });
 
+// Database health check
+app.get('/api/health/db', async (req, res) => {
+  try {
+    await db.sequelize.authenticate();
+    res.status(200).json({
+      success: true,
+      message: 'Database is connected',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Database connection failed',
+      error: error.message
+    });
+  }
+});
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingRoutes);
