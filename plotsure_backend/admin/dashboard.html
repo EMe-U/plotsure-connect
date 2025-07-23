@@ -18,12 +18,13 @@
     <!-- Dashboard Layout -->
     <div class="dashboard-layout">
         <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" style="background: linear-gradient(180deg, #27ae60, #219150);">
             <div class="sidebar-header">
-                <div class="logo">
-                    <span class="logo-icon">🏞️</span>
-                    <span class="logo-text">PlotSure</span>
+                <div class="logo" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: #27ae60; border-radius: 50%; font-weight: 900; font-size: 1.1rem; color: #fff; letter-spacing: 1px; font-family: 'Inter', sans-serif;">PSC</span>
+                    <span style="font-weight: 800; font-size: 1.1rem; color: #27ae60; letter-spacing: 1px;">PlotSure Connect</span>
                 </div>
+                <div style="font-size: 0.95rem; color: #27ae60; font-weight: 600; margin-top: 0.5rem;">Broker Dashboard</div>
                 <button class="sidebar-toggle" id="sidebarToggle">
                     <span></span>
                     <span></span>
@@ -86,17 +87,17 @@
         <!-- Main Content -->
         <main class="main-content">
             <!-- Top Bar -->
-            <header class="top-bar">
+            <header class="top-bar" style="background: #27ae60; color: #fff;">
                 <div class="top-bar-left">
                     <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
-                    <h1 class="page-title" id="pageTitle">Dashboard Overview</h1>
+                    <h1 class="page-title" id="pageTitle" style="color: #fff;">Dashboard Overview</h1>
                 </div>
                 <div class="top-bar-right">
-                    <button class="notification-btn" id="notificationBtn">
+                    <button class="notification-btn" id="notificationBtn" style="color: #fff;">
                         🔔
-                        <span class="notification-badge" id="notificationBadge">0</span>
+                        <span class="notification-badge" id="notificationBadge" style="background: #a3e635; color: #27ae60;">0</span>
                     </button>
-                    <a href="../index.html" class="view-site-btn">View Site</a>
+                    <a href="../index.html" class="view-site-btn" style="background: #a3e635; color: #27ae60;">View Site</a>
                 </div>
             </header>
 
@@ -105,29 +106,29 @@
                 <!-- Overview Page -->
                 <div class="page-content active" id="overviewPage">
                     <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon">🏞️</div>
+                        <div class="stat-card" style="border-left: 6px solid #27ae60; box-shadow: 0 2px 10px rgba(39,174,96,0.08); border-radius: 12px;">
+                            <div class="stat-icon" style="color: #27ae60;">🏞️</div>
                             <div class="stat-info">
                                 <div class="stat-number" id="totalListings">0</div>
                                 <div class="stat-label">Total Listings</div>
                             </div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">✅</div>
+                        <div class="stat-card" style="border-left: 6px solid #27ae60; box-shadow: 0 2px 10px rgba(39,174,96,0.08); border-radius: 12px;">
+                            <div class="stat-icon" style="color: #27ae60;">✅</div>
                             <div class="stat-info">
                                 <div class="stat-number" id="activeListings">0</div>
                                 <div class="stat-label">Active Listings</div>
                             </div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">👀</div>
+                        <div class="stat-card" style="border-left: 6px solid #27ae60; box-shadow: 0 2px 10px rgba(39,174,96,0.08); border-radius: 12px;">
+                            <div class="stat-icon" style="color: #27ae60;">👀</div>
                             <div class="stat-info">
                                 <div class="stat-number" id="totalViews">0</div>
                                 <div class="stat-label">Total Views</div>
                             </div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">💬</div>
+                        <div class="stat-card" style="border-left: 6px solid #27ae60; box-shadow: 0 2px 10px rgba(39,174,96,0.08); border-radius: 12px;">
+                            <div class="stat-icon" style="color: #27ae60;">💬</div>
                             <div class="stat-info">
                                 <div class="stat-number" id="totalInquiries">0</div>
                                 <div class="stat-label">Total Inquiries</div>
@@ -161,8 +162,8 @@
                 <!-- Listings Page -->
                 <div class="page-content" id="listingsPage">
                     <div class="page-header">
-                        <h2>My Listings</h2>
-                        <button class="btn btn-primary" onclick="showCreateListingModal()">
+                        <h2 style="color: #27ae60;">Manage Your Listings</h2>
+                        <button class="btn btn-primary" onclick="showCreateListingModal()" style="background: #27ae60; color: #fff;">
                             <span>➕</span> Create New Listing
                         </button>
                     </div>
@@ -190,7 +191,7 @@
                 <!-- Inquiries Page -->
                 <div class="page-content" id="inquiriesPage">
                     <div class="page-header">
-                        <h2>Customer Inquiries</h2>
+                        <h2 style="color: #27ae60;">Respond to Inquiries</h2>
                     </div>
 
                     <div class="filters-section">
@@ -223,7 +224,7 @@
                 <!-- Contacts Page -->
                 <div class="page-content" id="contactsPage">
                     <div class="page-header">
-                        <h2>Contact Messages</h2>
+                        <h2 style="color: #27ae60;">Contact Messages</h2>
                     </div>
 
                     <div class="filters-section">
@@ -254,7 +255,7 @@
                 <!-- Profile Page -->
                 <div class="page-content" id="profilePage">
                     <div class="page-header">
-                        <h2>Profile Settings</h2>
+                        <h2 style="color: #27ae60;">Broker Profile Settings</h2>
                     </div>
 
                     <div class="profile-container">

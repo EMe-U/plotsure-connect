@@ -4,397 +4,1048 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PlotSure Connect - Verified Land Listings in Bugesera</title>
-    <link rel="stylesheet" href="plotsure_frontend/assets/css/styles.css">
     <meta name="description" content="Combat land fraud with transparent, verified land listings in Bugesera, Rwanda. Complete documentation and visual proof for every plot.">
+    
+    <!-- Modern Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #27ae60;
+            --primary-dark: #219150;
+            --secondary: #a3e635;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gradient: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+            --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-circle {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(39,174,96,0.3);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(39,174,96,0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding-top: 100px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.25;
+            background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80'); /* Land/green field image */
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-height: calc(100vh - 100px);
+            z-index: 1;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            text-shadow: 0 4px 24px rgba(39,174,96,0.3);
+        }
+
+        .hero-text p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 2rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-hero {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 50px;
+        }
+
+        .btn-white {
+            background: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--white);
+        }
+
+        .btn-white:hover {
+            background: transparent;
+            color: var(--white);
+        }
+
+        .hero-visual {
+            position: relative;
+            animation: fadeIn 1s ease-out 0.6s;
+            animation-fill-mode: both;
+        }
+
+        .hero-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: perspective(1000px) rotateY(-10deg);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: perspective(1000px) rotateY(-10deg) translateY(0); }
+            50% { transform: perspective(1000px) rotateY(-10deg) translateY(-20px); }
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 0;
+            background: var(--light);
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-header p {
+            font-size: 1.25rem;
+            color: var(--gray);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: var(--gray);
+            line-height: 1.8;
+        }
+
+        /* Listings Preview */
+        .listings-preview {
+            padding: 5rem 0;
+            background: var(--white);
+        }
+
+        .listings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .listing-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .listing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .listing-image {
+            position: relative;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            overflow: hidden;
+        }
+
+        .listing-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .listing-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .listing-content {
+            padding: 2rem;
+        }
+
+        .listing-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .listing-location {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .listing-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .listing-price {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .listing-size {
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .listing-features {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-tag {
+            background: var(--light);
+            color: var(--secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-content h2 {
+            font-size: 3rem;
+            color: var(--white);
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+        }
+
+        .cta-content p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: var(--white);
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .footer-section p, .footer-section li {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links, .nav-buttons {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-visual {
+                display: none;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .features-grid, .listings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .cta-content h2 {
+                font-size: 2rem;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+    </style>
 </head>
 <body>
-    <!-- Loading Spinner -->
-    <div id="loadingSpinner" class="loading-spinner">
-        <div class="spinner"></div>
-        <p>Loading...</p>
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="loader-circle"></div>
     </div>
 
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">PlotSure Connect</div>
-                <nav>
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#listings">Listings</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </nav>
-                <div class="auth-buttons">
-                    <a href="#" class="btn btn-secondary" onclick="showModal('loginModal')" id="loginBtn">Broker Login</a>
-                    <a href="#" class="btn btn-primary" onclick="showModal('inquiryModal')">Inquire Now</a>
-                    <a href="admin/dashboard.html" class="btn btn-outline" id="dashboardBtn" style="display: none;">Dashboard</a>
-                    <a href="#" class="btn btn-secondary" onclick="logout()" id="logoutBtn" style="display: none;">Logout</a>
-                </div>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo" style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: #27ae60; border-radius: 50%; box-shadow: 0 2px 8px rgba(39,174,96,0.10); font-weight: 900; font-size: 1.1rem; color: #fff; letter-spacing: 1px; font-family: 'Inter', sans-serif;">
+                    PSC
+                </span>
+                <span style="font-weight: 800; font-size: 1.5rem; color: #27ae60; letter-spacing: 1px;">PlotSure Connect</span>
+            </a>
+            <ul class="nav-links" style="display: flex; gap: 2rem; align-items: center;">
+                <li><a href="#listings" style="color: #fff; font-weight: 500;">Browse Listings</a></li>
+                <li><a href="#about" style="color: #fff; font-weight: 500;">About Us</a></li>
+                <li><a href="#contact" style="color: #fff; font-weight: 500;">Contact</a></li>
+            </ul>
+            <div class="nav-buttons" style="display: flex; gap: 1rem;">
+                <a href="#" class="btn btn-outline" id="loginBtn" style="border-color: #27ae60; color: #27ae60; background: transparent;"> <svg style="vertical-align: middle; margin-right: 0.3em;" width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="#27ae60"/></svg>Broker Login</a>
+                <a href="#contact" class="btn btn-primary" style="background: #27ae60; color: #fff;"> <svg style="vertical-align: middle; margin-right: 0.3em;" width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M21 8V7l-3 2.29V8c0-3.31-2.69-6-6-6S3 4.69 3 8v8c0 3.31 2.69 6 6 6s6-2.69 6-6v-1.29l3 2.29V16c0 2.21-1.79 4-4 4H7c-2.21 0-4-1.79-4-4V8c0-2.21 1.79-4 4-4h10c2.21 0 4 1.79 4 4z" fill="#fff"/></svg>Get in Touch</a>
             </div>
         </div>
-    </header>
+    </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="container">
-            <h1>Verified Land Listings in Bugesera</h1>
-            <p>Combat land fraud with transparent, secure, and verified property listings</p>
-            <a href="#listings" class="btn btn-primary">Browse Verified Plots</a>
-            
-            <div class="trust-badge">
-                <h3>✅ 100% Verified Documentation</h3>
-                <p>Every listing includes official land titles, photos, and videos for complete transparency</p>
+    <section class="hero" id="home" style="position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: none;">
+        <div style="position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat; z-index: 0;"></div>
+        <div style="position: absolute; inset: 0; background: rgba(20,40,20,0.55); z-index: 1;"></div>
+        <div class="hero-content" style="position: relative; z-index: 2; max-width: 1200px; width: 100%; margin: 0 auto; padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <h1 style="font-size: 4rem; font-weight: 900; color: #fff; letter-spacing: 2px; margin-bottom: 0.5rem; line-height: 1.1;">
+                Plot<span style="color: #27ae60;">Sure</span> Connect
+            </h1>
+            <p style="font-size: 1.35rem; color: #e6f9e6; margin-bottom: 2.5rem; max-width: 700px;">Combat land fraud in Bugesera, Rwanda with our transparent, secure platform showcasing verified land listings with complete documentation.</p>
+            <div style="display: flex; gap: 2rem; justify-content: center; margin-bottom: 3.5rem; flex-wrap: wrap;">
+                <div style="backdrop-filter: blur(8px); background: rgba(34, 49, 34, 0.35); border-radius: 18px; border: 1.5px solid rgba(39,174,96,0.18); min-width: 260px; max-width: 320px; padding: 2rem 1.5rem; box-shadow: 0 4px 24px rgba(39,174,96,0.10);">
+                    <div style="font-size: 2.2rem; color: #27ae60; margin-bottom: 0.7rem;"><svg width="32" height="32" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#27ae60" opacity=".15"/><path d="M9 12l2 2 4-4" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                    <div style="font-weight: 700; color: #fff; font-size: 1.15rem; margin-bottom: 0.5rem;">Verified Documentation</div>
+                    <div style="color: #e6f9e6; font-size: 1rem;">All listings include official land titles and legal documents</div>
+                </div>
+                <div style="backdrop-filter: blur(8px); background: rgba(34, 49, 34, 0.35); border-radius: 18px; border: 1.5px solid rgba(39,174,96,0.18); min-width: 260px; max-width: 320px; padding: 2rem 1.5rem; box-shadow: 0 4px 24px rgba(39,174,96,0.10);">
+                    <div style="font-size: 2.2rem; color: #27ae60; margin-bottom: 0.7rem;"><svg width="32" height="32" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#27ae60" opacity=".15"/><path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6z" fill="#27ae60"/></svg></div>
+                    <div style="font-weight: 700; color: #fff; font-size: 1.15rem; margin-bottom: 0.5rem;">Diaspora Friendly</div>
+                    <div style="color: #e6f9e6; font-size: 1rem;">Purchase land remotely with complete confidence and transparency</div>
+                </div>
+                <div style="backdrop-filter: blur(8px); background: rgba(34, 49, 34, 0.35); border-radius: 18px; border: 1.5px solid rgba(39,174,96,0.18); min-width: 260px; max-width: 320px; padding: 2rem 1.5rem; box-shadow: 0 4px 24px rgba(39,174,96,0.10);">
+                    <div style="font-size: 2.2rem; color: #27ae60; margin-bottom: 0.7rem;"><svg width="32" height="32" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#27ae60" opacity=".15"/><path d="M7 17V7h10v10H7zm2-2h6V9H9v6z" fill="#27ae60"/></svg></div>
+                    <div style="font-weight: 700; color: #fff; font-size: 1.15rem; margin-bottom: 0.5rem;">Complete Transparency</div>
+                    <div style="color: #e6f9e6; font-size: 1rem;">Photos, videos, and documents for every listing</div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                <a href="#listings" class="btn btn-primary btn-hero" style="background: #27ae60; color: #fff; font-size: 1.15rem; min-width: 200px;">Start Browsing</a>
+                <a href="#about" class="btn btn-outline btn-hero" style="border-color: #27ae60; color: #27ae60; font-size: 1.15rem; min-width: 200px; background: rgba(255,255,255,0.08);">Learn More</a>
             </div>
         </div>
     </section>
 
-    <!-- Search Section -->
-    <section class="search-section">
-        <div class="container">
-            <div class="search-form">
-                <input type="text" placeholder="Search by location..." id="searchLocation">
-                <select id="priceRange">
-                    <option value="">Price Range</option>
-                    <option value="0-5000000">Under 5M RWF</option>
-                    <option value="5000000-10000000">5M - 10M RWF</option>
-                    <option value="10000000-20000000">10M - 20M RWF</option>
-                    <option value="20000000+">Above 20M RWF</option>
-                </select>
-                <select id="landSize">
-                    <option value="">Land Size</option>
-                    <option value="0-500">Under 500 sqm</option>
-                    <option value="500-1000">500 - 1000 sqm</option>
-                    <option value="1000-2000">1000 - 2000 sqm</option>
-                    <option value="2000+">Above 2000 sqm</option>
-                </select>
-                <select id="landType">
-                    <option value="">Land Type</option>
-                    <option value="residential">Residential</option>
-                    <option value="commercial">Commercial</option>
-                    <option value="agricultural">Agricultural</option>
-                    <option value="industrial">Industrial</option>
-                    <option value="mixed">Mixed Use</option>
-                </select>
-                <button class="btn btn-primary" onclick="searchListings()">Search</button>
+    <!-- Listings Preview -->
+    <section class="listings-preview" id="listings">
+        <div class="features-container">
+            <div class="section-header">
+                <h2>Featured Land Listings</h2>
+                <p>Explore our latest green plots with verified documentation</p>
             </div>
-        </div>
-    </section>
 
-    <!-- Listings Section -->
-    <section id="listings" class="listings-section">
-        <div class="container">
-            <h2 class="section-title">Featured Verified Listings</h2>
-            <div class="listings-grid" id="listingsGrid">
-                <!-- Listings will be populated by JavaScript -->
-            </div>
-            <div class="pagination" id="pagination">
-                <!-- Pagination will be populated by JavaScript -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features-section">
-        <div class="container">
-            <h2 class="section-title">Why Choose PlotSure Connect?</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🔐</div>
-                    <h3>100% Verified Documentation</h3>
-                    <p>Every listing includes scanned land titles and official documents to prevent fraud</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📸</div>
-                    <h3>Visual Proof</h3>
-                    <p>High-quality photos and videos of each plot for complete transparency</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🌍</div>
-                    <h3>Diaspora Friendly</h3>
-                    <p>Perfect for overseas buyers who need assurance before investing</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Fast & Secure</h3>
-                    <p>Quick inquiries and reservations with secure communication</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="about-section">
-        <div class="container">
-            <h2 class="section-title">About PlotSure Connect</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <h3>Our Mission</h3>
-                    <p>To combat land fraud and improve trust in land transactions in Bugesera, Rwanda, by providing a transparent, secure platform that showcases verified land listings with complete documentation.</p>
-                    
-                    <h3>The Problem We Solve</h3>
-                    <p>According to the Rwanda Land Management Authority (2022), Bugesera is one of the districts experiencing a rise in land disputes and ownership conflicts. Land fraud and incomplete ownership records are persistent issues within Rwanda's real estate market. Many buyers fall victim to scams, false land claims, and inaccurate or outdated documentation.</p>
-                    
-                    <h3>Our Solution</h3>
-                    <p>PlotSure Connect is a digital platform where verified commission agents post authenticated land listings on behalf of landowners. Every listing includes:</p>
-                    <ul class="solution-list">
-                        <li>✅ Scanned official land ownership documents (plot titles/certificates)</li>
-                        <li>✅ High-quality photos and videos of the actual plot</li>
-                        <li>✅ Verified landowner information and permissions</li>
-                        <li>✅ Transparent pricing and plot specifications</li>
-                        <li>✅ Direct communication with trusted brokers</li>
-                    </ul>
-                    
-                    <h3>Built for Trust</h3>
-                    <p>We understand the challenges faced by buyers, especially those in the diaspora, when purchasing land remotely. Our platform ensures complete transparency, reducing fraud-related disputes and building confidence in land transactions throughout Bugesera.</p>
-                </div>
-                <div class="about-stats" id="aboutStats">
-                    <div class="stat-card">
-                        <div class="stat-number" id="verifiedListings">-</div>
-                        <div class="stat-label">Verified Listings</div>
+            <div class="listings-grid">
+                <div class="listing-card">
+                    <div class="listing-image" style="background-image: url('https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80'); background-size: cover; background-position: center;">
+                        <span class="listing-badge">✅ Verified</span>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="totalViews">-</div>
-                        <div class="stat-label">Total Views</div>
+                    <div class="listing-content">
+                        <h3 class="listing-title">Prime Green Plot in Nyamata</h3>
+                        <div class="listing-location">
+                            📍 Nyamata, Bugesera District
+                        </div>
+                        <div class="listing-details">
+                            <div class="listing-price">15M RWF</div>
+                            <div class="listing-size">600 sqm</div>
+                        </div>
+                        <div class="listing-features">
+                            <span class="feature-tag">Fertile Soil</span>
+                            <span class="feature-tag">Road Access</span>
+                            <span class="feature-tag">Water</span>
+                        </div>
+                        <a href="#" class="btn btn-primary" style="width: 100%;">View Details</a>
+                        <a href="mailto:plotsureconnect@gmail.com?subject=Inquiry about Prime Green Plot in Nyamata&body=Hello, I am interested in the Prime Green Plot in Nyamata. Please provide more details." class="btn btn-outline" style="width: 100%; margin-top: 0.5rem; color: #27ae60; border-color: #27ae60;">Send Inquiry</a>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="successfulDeals">-</div>
-                        <div class="stat-label">Successful Deals</div>
+                </div>
+
+                <div class="listing-card">
+                    <div class="listing-image" style="background-image: url('https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=600&q=80'); background-size: cover; background-position: center;">
+                        <span class="listing-badge">✅ Verified</span>
+                    </div>
+                    <div class="listing-content">
+                        <h3 class="listing-title">Commercial Land Near Market</h3>
+                        <div class="listing-location">
+                            📍 Rilima, Bugesera District
+                        </div>
+                        <div class="listing-details">
+                            <div class="listing-price">25M RWF</div>
+                            <div class="listing-size">800 sqm</div>
+                        </div>
+                        <div class="listing-features">
+                            <span class="feature-tag">Commercial</span>
+                            <span class="feature-tag">Main Road</span>
+                            <span class="feature-tag">Utilities</span>
+                        </div>
+                        <a href="#" class="btn btn-primary" style="width: 100%;">View Details</a>
+                        <a href="mailto:plotsureconnect@gmail.com?subject=Inquiry about Commercial Land Near Market&body=Hello, I am interested in the Commercial Land Near Market. Please provide more details." class="btn btn-outline" style="width: 100%; margin-top: 0.5rem; color: #27ae60; border-color: #27ae60;">Send Inquiry</a>
+                    </div>
+                </div>
+
+                <div class="listing-card">
+                    <div class="listing-image" style="background-image: url('https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80'); background-size: cover; background-position: center;">
+                        <span class="listing-badge">✅ Verified</span>
+                    </div>
+                    <div class="listing-content">
+                        <h3 class="listing-title">Agricultural Land with Lake View</h3>
+                        <div class="listing-location">
+                            📍 Gashora, Bugesera District
+                        </div>
+                        <div class="listing-details">
+                            <div class="listing-price">50M RWF</div>
+                            <div class="listing-size">2 hectares</div>
+                        </div>
+                        <div class="listing-features">
+                            <span class="feature-tag">Lake View</span>
+                            <span class="feature-tag">Fertile Soil</span>
+                            <span class="feature-tag">Irrigation</span>
+                        </div>
+                        <a href="#" class="btn btn-primary" style="width: 100%;">View Details</a>
+                        <a href="mailto:plotsureconnect@gmail.com?subject=Inquiry about Agricultural Land with Lake View&body=Hello, I am interested in the Agricultural Land with Lake View. Please provide more details." class="btn btn-outline" style="width: 100%; margin-top: 0.5rem; color: #27ae60; border-color: #27ae60;">Send Inquiry</a>
                     </div>
                 </div>
             </div>
+
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="#" class="btn btn-primary btn-hero">View All Listings</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" style="background: #f8fafc; padding: 5rem 0;">
+        <div class="features-container" style="max-width: 900px; margin: 0 auto; text-align: center;">
+            <h2 style="font-size: 2.5rem; color: #27ae60; margin-bottom: 1.5rem;">About Us</h2>
+            <p style="font-size: 1.2rem; color: #475569;">PlotSure Connect is Rwanda's trusted platform for verified land listings in Bugesera District. Our mission is to make land transactions transparent, secure, and accessible for everyone. We work with local experts and verified brokers to ensure every plot is genuine and every buyer is confident.</p>
         </div>
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="contact-section">
-        <div class="container">
-            <h2 class="section-title">Contact Us</h2>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <h3>Get in Touch</h3>
-                    <p>Have questions about a specific plot or need assistance with your land purchase? We're here to help!</p>
-                    
-                    <div class="contact-methods">
-                        <div class="contact-method">
-                            <div class="contact-icon">📧</div>
-                            <div class="contact-details">
-                                <h4>Email</h4>
-                                <p>info@plotsureconnect.rw</p>
-                                <p>support@plotsureconnect.rw</p>
-                            </div>
-                        </div>
-                        <div class="contact-method">
-                            <div class="contact-icon">📞</div>
-                            <div class="contact-details">
-                                <h4>Phone</h4>
-                                <p>+250 788 XXX XXX</p>
-                                <p>+250 722 XXX XXX</p>
-                            </div>
-                        </div>
-                        <div class="contact-method">
-                            <div class="contact-icon">📍</div>
-                            <div class="contact-details">
-                                <h4>Office Location</h4>
-                                <p>Nyamata, Bugesera District</p>
-                                <p>Eastern Province, Rwanda</p>
-                            </div>
-                        </div>
-                        <div class="contact-method">
-                            <div class="contact-icon">🕒</div>
-                            <div class="contact-details">
-                                <h4>Business Hours</h4>
-                                <p>Monday - Friday: 8:00 AM - 6:00 PM</p>
-                                <p>Saturday: 9:00 AM - 4:00 PM</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="contact-form-section">
-                    <h3>Send us a Message</h3>
-                    <form class="contact-form" id="contactForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="contactName">Full Name *</label>
-                                <input type="text" id="contactName" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="contactEmail">Email Address *</label>
-                                <input type="email" id="contactEmail" required>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="contactPhone">Phone Number</label>
-                                <input type="tel" id="contactPhone">
-                            </div>
-                            <div class="form-group">
-                                <label for="contactSubject">Subject *</label>
-                                <select id="contactSubject" required>
-                                    <option value="">Select a subject</option>
-                                    <option value="general-inquiry">General Inquiry</option>
-                                    <option value="plot-interest">Interest in Specific Plot</option>
-                                    <option value="broker-services">Broker Services</option>
-                                    <option value="technical-support">Technical Support</option>
-                                    <option value="partnership">Partnership Inquiry</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="contactMessage">Message *</label>
-                            <textarea id="contactMessage" rows="5" placeholder="Please provide details about your inquiry..." required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Send Message</button>
-                    </form>
-                </div>
+    <section id="contact" style="background: #fff; padding: 5rem 0;">
+        <div class="features-container" style="max-width: 900px; margin: 0 auto; text-align: center;">
+            <h2 style="font-size: 2.5rem; color: #27ae60; margin-bottom: 1.5rem;">Contact Us</h2>
+            <p style="font-size: 1.2rem; color: #475569;">Have questions or want to get in touch? Fill out the form below or email us at <a href="mailto:plotsureconnect@gmail.com" style="color: #27ae60;">plotsureconnect@gmail.com</a>.</p>
+            <form style="margin-top: 2rem; max-width: 500px; margin-left: auto; margin-right: auto;">
+                <input type="text" placeholder="Your Name" required style="width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; border: 1px solid #e5e7eb;">
+                <input type="email" placeholder="Your Email" required style="width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; border: 1px solid #e5e7eb;">
+                <textarea placeholder="Your Message" required style="width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; border: 1px solid #e5e7eb;"></textarea>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" style="background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%); position: relative; overflow: hidden;">
+        <div class="cta-content">
+            <h2 style="color: #fff; font-size: 2.7rem; font-weight: 800; text-shadow: 0 2px 16px rgba(39,174,96,0.18);">Ready to Secure Your Land Investment?</h2>
+            <p style="color: #e6f9e6; font-size: 1.25rem;">Join thousands of satisfied customers who have found their perfect plot through PlotSure Connect</p>
+            <div class="hero-buttons" style="justify-content: center;">
+                <a href="#contact" class="btn btn-outline btn-hero" style="border-color: #fff; color: #fff;">Contact Us</a>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>PlotSure Connect</h3>
-                    <p>Fighting land fraud in Bugesera through transparency and verification</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <ul class="footer-links">
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#listings">Listings</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Contact Info</h3>
-                    <p>📧 info@plotsureconnect.rw</p>
-                    <p>📞 +250 xxx xxx xxx</p>
-                    <p>📍 Bugesera, Rwanda</p>
-                </div>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>PlotSure Connect</h3>
+                <p>Rwanda's most trusted platform for verified land listings in Bugesera District.</p>
+                <p style="margin-top: 1rem;">© 2025 PlotSure Connect. All rights reserved.</p>
             </div>
-            <p>&copy; 2025 PlotSure Connect. All rights reserved.</p>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">How It Works</a></li>
+                    <li><a href="#">Testimonials</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Land Verification</a></li>
+                    <li><a href="#">Property Listing</a></li>
+                    <li><a href="#">Broker Services</a></li>
+                    <li><a href="#">Legal Support</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p>📧 <a href="mailto:plotsureconnect@gmail.com" style="color: #27ae60;">plotsureconnect@gmail.com</a></p>
+                <p>📞 +250 791 845 708</p>
+                <p>📍 Nyamata, Bugesera District</p>
+                <p>🕒 Mon-Fri: 8AM-6PM</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Made with ❤️ in Rwanda | Privacy Policy | Terms of Service</p>
         </div>
     </footer>
 
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Broker Login</h2>
-                <button class="close-modal" onclick="hideModal('loginModal')">&times;</button>
-            </div>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="loginEmail">Email:</label>
-                    <input type="email" id="loginEmail" required>
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Password:</label>
-                    <input type="password" id="loginPassword" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Login</button>
-            </form>
-        </div>
-    </div>
+    <script>
+        // Hide loader when page is loaded
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1000);
+        });
 
-    <!-- Inquiry Modal -->
-    <div id="inquiryModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Land Inquiry</h2>
-                <button class="close-modal" onclick="hideModal('inquiryModal')">&times;</button>
-            </div>
-            <form id="inquiryForm">
-                <input type="hidden" id="inquiryListingId" value="">
-                <div class="form-group">
-                    <label for="inquiryName">Full Name *</label>
-                    <input type="text" id="inquiryName" required>
-                </div>
-                <div class="form-group">
-                    <label for="inquiryEmail">Email Address *</label>
-                    <input type="email" id="inquiryEmail" required>
-                </div>
-                <div class="form-group">
-                    <label for="inquiryPhone">Phone Number *</label>
-                    <input type="tel" id="inquiryPhone" required>
-                </div>
-                <div class="form-group">
-                    <label for="inquiryLocation">Your Location</label>
-                    <input type="text" id="inquiryLocation" placeholder="e.g., Kigali, Rwanda or Diaspora location">
-                </div>
-                <div class="form-group">
-                    <label for="inquiryType">Inquiry Type *</label>
-                    <select id="inquiryType" required>
-                        <option value="">Select inquiry type</option>
-                        <option value="general_interest">General Interest</option>
-                        <option value="site_visit">Site Visit Request</option>
-                        <option value="price_negotiation">Price Negotiation</option>
-                        <option value="document_verification">Document Verification</option>
-                        <option value="purchase_intent">Purchase Intent</option>
-                        <option value="reservation">Reservation Request</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="inquiryMessage">Message *</label>
-                    <textarea id="inquiryMessage" rows="4" placeholder="Please specify which plot you're interested in and any questions you have..." required></textarea>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="inquiryBudgetMin">Budget Range (Min)</label>
-                        <input type="number" id="inquiryBudgetMin" placeholder="Minimum budget in RWF">
-                    </div>
-                    <div class="form-group">
-                        <label for="inquiryBudgetMax">Budget Range (Max)</label>
-                        <input type="number" id="inquiryBudgetMax" placeholder="Maximum budget in RWF">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inquiryTimeframe">Purchase Timeframe</label>
-                    <select id="inquiryTimeframe">
-                        <option value="flexible">Flexible</option>
-                        <option value="immediate">Immediate</option>
-                        <option value="within_month">Within 1 Month</option>
-                        <option value="within_3months">Within 3 Months</option>
-                        <option value="within_6months">Within 6 Months</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="isDiaspora"> I am currently living outside Rwanda (Diaspora)
-                    </label>
-                </div>
-                <button type="submit" class="btn btn-primary">Send Inquiry</button>
-            </form>
-        </div>
-    </div>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
 
-    <!-- Listing Details Modal -->
-    <div id="listingDetailsModal" class="modal">
-        <div class="modal-content listing-modal">
-            <div class="modal-header">
-                <h2 id="listingModalTitle">Plot Details</h2>
-                <button class="close-modal" onclick="hideModal('listingDetailsModal')">&times;</button>
-            </div>
-            <div id="listingModalContent">
-                <!-- Content will be populated by JavaScript -->
-            </div>
-        </div>
-    </div>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
 
-    <!-- Success/Error Messages -->
-    <div id="messageContainer" class="message-container"></div>
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
 
-    <!-- JavaScript -->
-    <script src="plotsure_frontend/assets/js/config.js"></script>
-    <script src="plotsure_frontend/assets/js/api.js"></script>
-    <script src="plotsure_frontend/assets/js/auth.js"></script>
-    <script src="plotsure_frontend/assets/js/listings.js"></script>
-    <script src="plotsure_frontend/assets/js/main.js"></script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.8s ease-out forwards';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe all feature cards and listing cards
+        document.querySelectorAll('.feature-card, .listing-card').forEach(card => {
+            card.style.opacity = '0';
+            observer.observe(card);
+        });
+
+        // Add hover effect to listing cards
+        document.querySelectorAll('.listing-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+        const navButtons = document.querySelector('.nav-buttons');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            // This is a simple toggle - in production, you'd create a proper mobile menu
+            alert('Mobile menu would open here!');
+        });
+
+        // Add parallax effect to hero section
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.hero-bg');
+            parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+        });
+
+        // Counter animation for statistics
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current) + (element.textContent.includes('+') ? '+' : '');
+            }, 30);
+        }
+
+        // Trigger counter animation when stats are in view
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statNumbers = entry.target.querySelectorAll('.stat-number');
+                    statNumbers.forEach(stat => {
+                        const target = parseInt(stat.textContent);
+                        animateCounter(stat, target);
+                    });
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const statGrid = document.querySelector('.stat-grid');
+        if (statGrid) {
+            statsObserver.observe(statGrid);
+        }
+
+        // Add some interactive elements
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    width: ${size}px;
+                    height: ${size}px;
+                    background: rgba(255,255,255,0.5);
+                    border-radius: 50%;
+                    transform: scale(0);
+                    animation: ripple 0.6s ease-out;
+                    pointer-events: none;
+                    top: ${y}px;
+                    left: ${x}px;
+                `;
+                
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Add CSS for ripple effect
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
 </html>
