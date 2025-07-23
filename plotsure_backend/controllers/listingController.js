@@ -10,7 +10,7 @@ exports.getAllListings = async (req, res) => {
     const {
       page = 1,
       limit = 12,
-      status = 'active',
+      status = 'available',
       district,
       sector,
       land_type,
@@ -436,7 +436,7 @@ exports.verifyListing = async (req, res) => {
       verified_by: req.user.id,
       verification_date: new Date(),
       verification_notes,
-      status: 'active' // Automatically make active when verified
+      status: 'available' // Automatically make active when verified
     });
 
     // Send notification email to broker
@@ -525,18 +525,18 @@ exports.getListingStats = async (req, res) => {
     const where = brokerId ? { broker_id: brokerId } : {};
 
     const stats = await Promise.all([
-      Listing.count({ where: { ...where, status: 'active' } }),
+      Listing.count({ where: { ...where, status: 'available' } }),
       Listing.count({ where: { ...where, status: 'sold' } }),
       Listing.count({ where: { ...where, status: 'reserved' } }),
       Listing.count({ where: { ...where, featured: true } }),
-      Listing.sum('views_count', { where }),
+      Listing.sum('views', { where }),
       Listing.sum('inquiries_count', { where })
     ]);
 
     res.status(200).json({
       success: true,
       data: {
-        active_listings: stats[0] || 0,
+        available_listings: stats[0] || 0,
         sold_listings: stats[1] || 0,
         reserved_listings: stats[2] || 0,
         featured_listings: stats[3] || 0,

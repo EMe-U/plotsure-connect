@@ -32,7 +32,7 @@ exports.createInquiry = async (req, res) => {
         });
       }
 
-      if (listing.status !== 'active') {
+      if (listing.status !== 'available') {
         return res.status(400).json({
           success: false,
           message: 'This listing is not available for inquiries'
