@@ -8,84 +8,35 @@
     <link rel="stylesheet" href="../plotsure_frontend/assets/css/dashboard.css">
     <meta name="description" content="Broker dashboard for managing land listings and inquiries">
 </head>
-<body>
+<body style="background: #f8fafc;">
     <!-- Loading Spinner -->
     <div id="loadingSpinner" class="loading-spinner">
         <div class="spinner"></div>
         <p>Loading...</p>
     </div>
 
-    <!-- Dashboard Layout -->
     <div class="dashboard-layout">
         <!-- Sidebar -->
-        <aside class="sidebar" style="background: linear-gradient(180deg, #27ae60, #219150);">
+        <aside class="sidebar" style="background: linear-gradient(180deg, #27ae60, #219150); min-height: 100vh;">
             <div class="sidebar-header">
                 <div class="logo" style="display: flex; align-items: center; gap: 0.5rem;">
                     <span style="display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: #27ae60; border-radius: 50%; font-weight: 900; font-size: 1.1rem; color: #fff; letter-spacing: 1px; font-family: 'Inter', sans-serif;">PSC</span>
                     <span style="font-weight: 800; font-size: 1.1rem; color: #27ae60; letter-spacing: 1px;">PlotSure Connect</span>
                 </div>
-                <div style="font-size: 0.95rem; color: #27ae60; font-weight: 600; margin-top: 0.5rem;">Broker Dashboard</div>
-                <button class="sidebar-toggle" id="sidebarToggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
             </div>
-
-            <nav class="sidebar-nav">
-                <ul>
-                    <li class="nav-item active" data-page="overview">
-                        <a href="#overview">
-                            <span class="nav-icon">📊</span>
-                            <span class="nav-text">Overview</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" data-page="listings">
-                        <a href="#listings">
-                            <span class="nav-icon">🏞️</span>
-                            <span class="nav-text">My Listings</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" data-page="inquiries">
-                        <a href="#inquiries">
-                            <span class="nav-icon">💬</span>
-                            <span class="nav-text">Inquiries</span>
-                            <span class="nav-badge" id="inquiryBadge">0</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" data-page="contacts">
-                        <a href="#contacts">
-                            <span class="nav-icon">📧</span>
-                            <span class="nav-text">Contact Messages</span>
-                            <span class="nav-badge" id="contactBadge">0</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" data-page="profile">
-                        <a href="#profile">
-                            <span class="nav-icon">👤</span>
-                            <span class="nav-text">Profile</span>
-                        </a>
-                    </li>
+            <nav class="sidebar-nav" style="margin-top: 2rem;">
+                <ul style="list-style: none; padding: 0;">
+                    <li class="nav-item active"><a href="#" style="display: flex; align-items: center; gap: 0.75rem; color: #fff; padding: 1rem 2rem; font-weight: 600;"><span>🏠</span>Dashboard</a></li>
+                    <li class="nav-item"><a href="#listings" style="display: flex; align-items: center; gap: 0.75rem; color: #fff; padding: 1rem 2rem;"><span>🏞️</span>Listings</a></li>
+                    <li class="nav-item"><a href="#inquiries" style="display: flex; align-items: center; gap: 0.75rem; color: #fff; padding: 1rem 2rem;"><span>💬</span>Inquiries <span class="nav-badge" style="background: #a3e635; color: #27ae60; margin-left: 0.5rem;">3</span></a></li>
+                    <li class="nav-item"><a href="#contacts" style="display: flex; align-items: center; gap: 0.75rem; color: #fff; padding: 1rem 2rem;"><span>📧</span>Contacts</a></li>
+                    <li class="nav-item"><a href="#profile" style="display: flex; align-items: center; gap: 0.75rem; color: #fff; padding: 1rem 2rem;"><span>👤</span>Profile</a></li>
+                    <li class="nav-item"><a href="#settings" style="display: flex; align-items: center; gap: 0.75rem; color: #fff; padding: 1rem 2rem;"><span>⚙️</span>Settings</a></li>
                 </ul>
             </nav>
-
-            <div class="sidebar-footer">
-                <div class="user-info" id="userInfo">
-                    <div class="user-avatar">👤</div>
-                    <div class="user-details">
-                        <div class="user-name" id="userName">Loading...</div>
-                        <div class="user-role" id="userRole">Broker</div>
-                    </div>
-                </div>
-                <button class="logout-btn" onclick="logout()">
-                    <span class="logout-icon">🚪</span>
-                    <span class="logout-text">Logout</span>
-                </button>
-            </div>
         </aside>
-
         <!-- Main Content -->
-        <main class="main-content" style="background: linear-gradient(120deg, #f8fafc 60%, #e6f9e6 100%); min-height: 100vh;">
+        <main class="main-content" style="background: #f8fafc; min-height: 100vh;">
             <!-- Welcome Message -->
             <div style="padding: 2rem 2rem 0 2rem;">
                 <h1 style="font-size: 2.2rem; color: #27ae60; font-weight: 900; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
@@ -156,34 +107,51 @@
                 </div>
             </section>
             <!-- Listings Section -->
-            <section style="margin: 2rem; background: #fff; border-radius: 18px; box-shadow: 0 4px 24px rgba(39,174,96,0.08); padding: 2rem;">
-                <h2 style="color: #27ae60; font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem;">🏞️ Manage Your Listings</h2>
-                    <div class="page-header">
-                        <h2 style="color: #27ae60;">Manage Your Listings</h2>
-                        <button class="btn btn-primary" onclick="showCreateListingModal()" style="background: #27ae60; color: #fff;">
-                            <span>➕</span> Create New Listing
-                        </button>
-                    </div>
-
-                    <div class="filters-section">
-                        <div class="filters-row">
-                            <select id="statusFilter" onchange="filterListings()">
-                                <option value="">All Status</option>
-                                <option value="draft">Draft</option>
-                                <option value="active">Active</option>
-                                <option value="reserved">Reserved</option>
-                                <option value="sold">Sold</option>
-                            </select>
-                            <input type="text" id="searchListings" placeholder="Search listings..." onchange="filterListings()">
+            <section id="listings" style="margin: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2 style="color: #27ae60; font-size: 2rem; font-weight: 900; display: flex; align-items: center; gap: 0.5rem;">🏞️ Listings</h2>
+                    <button class="btn btn-primary" style="background: #27ae60; color: #fff; font-weight: 600; border-radius: 8px;">➕ Add Listing</button>
+                </div>
+                <!-- Tabs for filtering -->
+                <div style="display: flex; gap: 2rem; border-bottom: 2px solid #e5e7eb; margin-bottom: 2rem;">
+                    <button class="btn" style="background: none; color: #27ae60; border: none; font-weight: 700; border-bottom: 3px solid #27ae60; border-radius: 0;">All</button>
+                    <button class="btn" style="background: none; color: #64748b; border: none; font-weight: 600;">Available</button>
+                    <button class="btn" style="background: none; color: #64748b; border: none; font-weight: 600;">Reserved</button>
+                    <button class="btn" style="background: none; color: #64748b; border: none; font-weight: 600;">Sold</button>
+                </div>
+                <!-- Listings Grid -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2rem;">
+                    <!-- Example Listing Card -->
+                    <div style="background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(39,174,96,0.08); padding: 2rem; display: flex; flex-direction: column; gap: 1rem; position: relative;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 48px; height: 48px; background: #e6f9e6; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">🏞️</div>
+                            <div>
+                                <div style="font-size: 1.2rem; font-weight: 700; color: #27ae60;">Prime Green Plot in Nyamata</div>
+                                <div style="color: #64748b; font-size: 1rem;">Nyamata, Bugesera District</div>
+                            </div>
+                            <span style="margin-left: auto; background: #e6f9e6; color: #27ae60; font-weight: 700; border-radius: 8px; padding: 0.25rem 0.75rem; font-size: 0.95rem;">Available</span>
+                        </div>
+                        <div style="color: #475569; font-size: 1rem;">600 sqm • 15M RWF</div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <span style="background: #f8fafc; color: #27ae60; border-radius: 6px; padding: 0.25rem 0.75rem; font-size: 0.9rem;">Fertile Soil</span>
+                            <span style="background: #f8fafc; color: #27ae60; border-radius: 6px; padding: 0.25rem 0.75rem; font-size: 0.9rem;">Road Access</span>
+                            <span style="background: #f8fafc; color: #27ae60; border-radius: 6px; padding: 0.25rem 0.75rem; font-size: 0.9rem;">Water</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-top: 1rem;">
+                            <button class="btn btn-outline" style="border-color: #27ae60; color: #27ae60; font-weight: 600; border-radius: 8px;">Edit</button>
+                            <button class="btn btn-outline" style="border-color: #ef4444; color: #ef4444; font-weight: 600; border-radius: 8px;">Delete</button>
+                            <span style="margin-left: auto; display: flex; align-items: center; gap: 0.3rem;">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Broker" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(39,174,96,0.10);">
+                                <span style="color: #64748b; font-size: 0.95rem; font-weight: 500;">You</span>
+                            </span>
+                        </div>
+                        <div style="position: absolute; top: 1rem; right: 1rem;">
+                            <span style="background: #27ae60; color: #fff; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 2px 8px rgba(39,174,96,0.10);">✅</span>
                         </div>
                     </div>
-
-                    <div class="listings-container" id="listingsContainer">
-                        <div class="loading-message">Loading your listings...</div>
-                    </div>
-
-                    <div class="pagination" id="listingsPagination"></div>
-                </section>
+                    <!-- Repeat similar cards for other listings -->
+                </div>
+            </section>
             <!-- Inquiries Section -->
             <section style="margin: 2rem; background: #fff; border-radius: 18px; box-shadow: 0 4px 24px rgba(39,174,96,0.08); padding: 2rem;">
                 <h2 style="color: #27ae60; font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem;">💬 Respond to Inquiries</h2>
