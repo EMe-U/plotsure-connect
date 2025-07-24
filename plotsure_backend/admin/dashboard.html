@@ -3,151 +3,393 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Broker Dashboard - PlotSure Connect</title>
-    <!-- Fixed path: go up two levels from admin folder -->
-    <link rel="stylesheet" href="../plotsure_frontend/assets/css/dashboard.css">
-    <meta name="description" content="Broker dashboard for managing land listings and inquiries">
+    <title>Broker Dashboard | PlotSure Connect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #27ae60;
+            --primary-light: #e6f9e6;
+            --sidebar-bg: #fff;
+            --sidebar-active: #e6f9e6;
+            --sidebar-icon: #27ae60;
+            --topbar-bg: #fff;
+            --card-bg: #fff;
+            --card-shadow: 0 4px 24px rgba(39,174,96,0.08);
+            --border: #e5e7eb;
+            --gray: #64748b;
+            --light: #f8fafc;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+        }
+        body {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 220px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 2rem 0 1rem 0;
+        }
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin: 0 2rem 2.5rem 2rem;
+        }
+        .sidebar-logo-icon {
+            width: 38px;
+            height: 38px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        .sidebar-nav {
+            flex: 1;
+        }
+        .sidebar-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.85rem 2rem;
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 10px 0 0 10px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .sidebar-link.active, .sidebar-link:hover {
+            background: var(--sidebar-active);
+            color: var(--primary);
+        }
+        .sidebar-link .icon {
+            font-size: 1.3rem;
+            color: var(--sidebar-icon);
+        }
+        .sidebar-footer {
+            margin: 2rem 2rem 0 2rem;
+            font-size: 0.95rem;
+            color: var(--gray);
+        }
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .topbar {
+            background: var(--topbar-bg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.2rem 2.5rem 1.2rem 2.5rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .topbar-search {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .topbar-search input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 1rem;
+            width: 180px;
+        }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .topbar-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .topbar-icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.3rem;
+            color: var(--primary);
+            position: relative;
+        }
+        .topbar-icon-btn .badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ef4444;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            font-weight: 700;
+        }
+        .dashboard-content {
+            padding: 2.5rem 2.5rem 2rem 2.5rem;
+            flex: 1;
+            min-width: 0;
+        }
+        .tabs {
+            display: flex;
+            gap: 2rem;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 2rem;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray);
+            padding: 0.7rem 0;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: color 0.2s, border-bottom 0.2s;
+        }
+        .tab-btn.active, .tab-btn:hover {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2rem;
+        }
+        .dashboard-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            padding: 2rem 1.5rem 1.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;
+            min-height: 180px;
+        }
+        .dashboard-card .card-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+        .dashboard-card .card-subtitle {
+            color: var(--gray);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .dashboard-card .card-status {
+            display: inline-block;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 700;
+            border-radius: 8px;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+        .dashboard-card .card-date {
+            background: var(--light);
+            color: var(--gray);
+            border-radius: 8px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.95rem;
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+        }
+        .dashboard-card .card-avatars {
+            display: flex;
+            align-items: center;
+            gap: -10px;
+            margin-top: 0.7rem;
+        }
+        .dashboard-card .card-avatars img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(39,174,96,0.10);
+            margin-left: -10px;
+        }
+        .dashboard-card .card-actions {
+            position: absolute;
+            top: 1.2rem;
+            left: 1.2rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .dashboard-card .card-actions .action-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .dashboard-card .card-actions .action-btn:hover {
+            color: var(--primary);
+        }
+        @media (max-width: 900px) {
+            .sidebar { width: 60px; }
+            .sidebar-logo span { display: none; }
+            .sidebar-link span { display: none; }
+            .dashboard-content { padding: 1rem; }
+            .topbar { padding: 1rem; }
+        }
+        @media (max-width: 600px) {
+            .card-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
-<body style="background: #f8fafc;">
-    <!-- Loading Spinner -->
-    <div id="loadingSpinner" class="loading-spinner">
-        <div class="spinner"></div>
-        <p>Loading...</p>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <span class="sidebar-logo-icon">PSC</span>
+            <span>PlotSure Connect</span>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="#" class="sidebar-link active"><span class="icon">🏠</span><span>Dashboard</span></a></li>
+                <li><a href="#" class="sidebar-link"><span class="icon">📋</span><span>Listings</span></a></li>
+                <li><a href="#" class="sidebar-link"><span class="icon">💬</span><span>Inquiries</span></a></li>
+                <li><a href="#" class="sidebar-link"><span class="icon">📧</span><span>Contacts</span></a></li>
+                <li><a href="#" class="sidebar-link"><span class="icon">👤</span><span>Profile</span></a></li>
+                <li><a href="#" class="sidebar-link"><span class="icon">⚙️</span><span>Settings</span></a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <div>© 2025 PlotSure Connect</div>
+            <div style="margin-top: 0.5rem;">Support: <a href="mailto:plotsureconnect@gmail.com" style="color: var(--primary); text-decoration: none;">plotsureconnect@gmail.com</a></div>
+        </div>
     </div>
-
-    <div class="dashboard-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar" style="background: linear-gradient(180deg, #27ae60, #219150); min-height: 100vh;">
-            <div class="sidebar-header">
-                <div class="logo" style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: #27ae60; border-radius: 50%; font-weight: 900; font-size: 1.1rem; color: #fff; letter-spacing: 1px; font-family: 'Inter', sans-serif;">PSC</span>
-                    <span style="font-weight: 800; font-size: 1.1rem; color: #27ae60; letter-spacing: 1px;">PlotSure Connect</span>
+    <div class="main">
+        <div class="topbar">
+            <div class="topbar-left">
+                <span class="section-title" id="sectionTitle">Listings</span>
+                <div class="topbar-search">
+                    <span>🔍</span>
+                    <input type="text" placeholder="Search...">
                 </div>
             </div>
-            <nav class="sidebar-nav" style="margin-top: 2rem;">
-                <ul style="list-style: none; padding: 0;">
-                    <li class="nav-item active"><a href="#" style="display: flex; align-items: center; gap: 0.75rem; color: #fff; padding: 1rem 2rem; font-weight: 600;"><span>🏠</span>Dashboard</a></li>
-                    <li class="nav-item"><a href="#listings" style="display: flex; align-items: center; gap: 0.75rem; color: #fff; padding: 1rem 2rem;"><span>🏞️</span>Listings</a></li>
-                    <li class="nav-item"><a href="#inquiries" style="display: flex; align-items: center; gap: 0.75rem; color: #fff; padding: 1rem 2rem;"><span>💬</span>Inquiries <span class="nav-badge" style="background: #a3e635; color: #27ae60; margin-left: 0.5rem;">3</span></a></li>
-                    <li class="nav-item"><a href="#contacts" style="display: flex; align-items: center; gap: 0.75rem; color: #fff; padding: 1rem 2rem;"><span>📧</span>Contacts</a></li>
-                    <li class="nav-item"><a href="#profile" style="display: flex; align-items: center; gap: 0.75rem; color: #fff; padding: 1rem 2rem;"><span>👤</span>Profile</a></li>
-                    <li class="nav-item"><a href="#settings" style="display: flex; align-items: center; gap: 0.75rem; color: #fff; padding: 1rem 2rem;"><span>⚙️</span>Settings</a></li>
-                </ul>
-            </nav>
-        </aside>
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Top Bar -->
-            <div class="topbar">
-                <div class="topbar-left">
-                    <span class="page-title">Listings</span>
-                    <div class="breadcrumb">
-                        <span>Dashboard</span> <span>/</span> <span>Listings</span>
-                    </div>
-                </div>
-                <div class="topbar-right">
-                    <div class="search-box">
-                        <i class="lucide lucide-search"></i>
-                        <input type="text" placeholder="Search listings...">
-                    </div>
-                    <button class="icon-btn">
-                        <i class="lucide lucide-bell"></i>
-                        <span class="notification-badge">3</span>
-                    </button>
-                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Broker" style="width: 40px; height: 40px; border-radius: 50%;">
-                </div>
+            <div class="topbar-right">
+                <button class="topbar-icon-btn"><span>🔔</span><span class="badge">3</span></button>
+                <div class="topbar-avatar">BR</div>
             </div>
-
-            <div class="dashboard-content">
-                <!-- Quick Actions -->
-                <div class="quick-actions">
-                    <div class="quick-action-card">
-                        <div class="quick-action-icon"><i class="lucide lucide-plus"></i></div>
-                        <div class="quick-action-title">Add Listing</div>
-                        <div class="quick-action-desc">Post a new land listing</div>
-                    </div>
-                    <div class="quick-action-card">
-                        <div class="quick-action-icon"><i class="lucide lucide-mail"></i></div>
-                        <div class="quick-action-title">View Inquiries</div>
-                        <div class="quick-action-desc">See all buyer messages</div>
-                    </div>
-                    <div class="quick-action-card">
-                        <div class="quick-action-icon"><i class="lucide lucide-user"></i></div>
-                        <div class="quick-action-title">Profile</div>
-                        <div class="quick-action-desc">Update your info</div>
-                    </div>
-                </div>
-
-                <!-- Stats Grid -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-title">Total Listings</span>
-                            <span class="stat-icon"><i class="lucide lucide-map"></i></span>
-                        </div>
-                        <div class="stat-value">12</div>
-                        <div class="stat-change"><i class="lucide lucide-arrow-up"></i> 2 this week</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-title">Active Inquiries</span>
-                            <span class="stat-icon"><i class="lucide lucide-mail"></i></span>
-                        </div>
-                        <div class="stat-value">3</div>
-                        <div class="stat-change"><i class="lucide lucide-arrow-down stat-change negative"></i> 1 this week</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-title">Sold Plots</span>
-                            <span class="stat-icon"><i class="lucide lucide-check-circle"></i></span>
-                        </div>
-                        <div class="stat-value">5</div>
-                        <div class="stat-change"><i class="lucide lucide-arrow-up"></i> 1 this week</div>
-                    </div>
-                </div>
-
-                <!-- Listings Tabs -->
-                <div style="margin-bottom: 2rem;">
-                    <button class="btn btn-primary">All</button>
-                    <button class="btn btn-outline">Available</button>
-                    <button class="btn btn-outline">Reserved</button>
-                    <button class="btn btn-outline">Sold</button>
-                </div>
-
-                <!-- Listings Grid -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2rem;">
-                    <!-- Example Listing Card -->
-                    <div style="background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(39,174,96,0.08); padding: 2rem; display: flex; flex-direction: column; gap: 1rem; position: relative;">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <div style="width: 48px; height: 48px; background: #e6f9e6; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">🏞️</div>
-                            <div>
-                                <div style="font-size: 1.2rem; font-weight: 700; color: #27ae60;">Prime Green Plot in Nyamata</div>
-                                <div style="color: #64748b; font-size: 1rem;">Nyamata, Bugesera District</div>
-                            </div>
-                            <span style="margin-left: auto; background: #e6f9e6; color: #27ae60; font-weight: 700; border-radius: 8px; padding: 0.25rem 0.75rem; font-size: 0.95rem;">Available</span>
-                        </div>
-                        <div style="color: #475569; font-size: 1rem;">600 sqm • 15M RWF</div>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <span style="background: #f8fafc; color: #27ae60; border-radius: 6px; padding: 0.25rem 0.75rem; font-size: 0.9rem;">Fertile Soil</span>
-                            <span style="background: #f8fafc; color: #27ae60; border-radius: 6px; padding: 0.25rem 0.75rem; font-size: 0.9rem;">Road Access</span>
-                            <span style="background: #f8fafc; color: #27ae60; border-radius: 6px; padding: 0.25rem 0.75rem; font-size: 0.9rem;">Water</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-top: 1rem;">
-                            <button class="btn btn-outline">Edit</button>
-                            <button class="btn btn-outline" style="border-color: #ef4444; color: #ef4444;">Delete</button>
-                            <span style="margin-left: auto; display: flex; align-items: center; gap: 0.3rem;">
-                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Broker" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(39,174,96,0.10);">
-                                <span style="color: #64748b; font-size: 0.95rem; font-weight: 500;">You</span>
-                            </span>
-                        </div>
-                        <div style="position: absolute; top: 1rem; right: 1rem;">
-                            <span style="background: #27ae60; color: #fff; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 2px 8px rgba(39,174,96,0.10);">✅</span>
-                        </div>
-                    </div>
-                    <!-- More cards... -->
-                </div>
+        </div>
+        <div class="dashboard-content">
+            <!-- Tabs for each section -->
+            <div class="tabs" id="sectionTabs">
+                <button class="tab-btn active">All</button>
+                <button class="tab-btn">Available</button>
+                <button class="tab-btn">Reserved</button>
+                <button class="tab-btn">Sold</button>
             </div>
-        </main>
+            <!-- Card grid for Listings (default) -->
+            <div class="card-grid" id="cardGrid">
+                <!-- Example card -->
+                <div class="dashboard-card">
+                    <div class="card-actions">
+                        <button class="action-btn">⋮</button>
+                    </div>
+                    <div class="card-title">Prime Green Plot in Nyamata</div>
+                    <div class="card-subtitle">Nyamata, Bugesera District</div>
+                    <div class="card-status">Available</div>
+                    <div class="card-date">Dec 05</div>
+                    <div class="card-avatars">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Broker">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Broker">
+                    </div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-actions">
+                        <button class="action-btn">⋮</button>
+                    </div>
+                    <div class="card-title">Commercial Land Near Market</div>
+                    <div class="card-subtitle">Rilima, Bugesera District</div>
+                    <div class="card-status">Reserved</div>
+                    <div class="card-date">Nov 29</div>
+                    <div class="card-avatars">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Broker">
+                    </div>
+                </div>
+                <!-- More cards as needed -->
+            </div>
+            <!-- Placeholder for other sections (Inquiries, Contacts, Profile) -->
+            <!--
+            <div class="tabs" id="inquiriesTabs" style="display:none;">
+                <button class="tab-btn active">All</button>
+                <button class="tab-btn">New</button>
+                <button class="tab-btn">Responded</button>
+                <button class="tab-btn">Closed</button>
+            </div>
+            <div class="card-grid" id="inquiriesGrid" style="display:none;">
+                <div class="dashboard-card"> ...inquiry card... </div>
+            </div>
+            <div class="tabs" id="contactsTabs" style="display:none;">
+                <button class="tab-btn active">All</button>
+                <button class="tab-btn">New</button>
+                <button class="tab-btn">Responded</button>
+                <button class="tab-btn">Closed</button>
+            </div>
+            <div class="card-grid" id="contactsGrid" style="display:none;">
+                <div class="dashboard-card"> ...contact card... </div>
+            </div>
+            <div class="card-grid" id="profileGrid" style="display:none;">
+                <div class="dashboard-card"> ...profile card... </div>
+            </div>
+            -->
+        </div>
     </div>
 
     <!-- Modals -->
@@ -323,5 +565,4 @@
     <script src="/plotsure_frontend/assets/js/auth.js"></script>
     <script src="/plotsure_frontend/assets/js/dashboard.js"></script>
 </body>
-</html>
 </html>
