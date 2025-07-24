@@ -330,6 +330,9 @@
         <div class="dashboard-content">
             <!-- Listings Section (default visible) -->
             <div id="section-listings" class="dashboard-section" style="display: block;">
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 1.5rem;">
+                    <button id="addListingBtn" class="btn btn-primary" style="background: #27ae60; color: #fff; font-weight: 600; border-radius: 8px;">➕ Add Listing</button>
+                </div>
                 <div class="tabs" id="listingsTabs">
                     <button class="tab-btn active" data-tab="all">All</button>
                     <button class="tab-btn" data-tab="available">Available</button>
@@ -338,6 +341,118 @@
                 </div>
                 <div class="card-grid" id="listingsGrid">
                     <!-- Listing cards will be rendered here by JS -->
+                </div>
+            </div>
+            <!-- Add Listing Modal -->
+            <div id="addListingModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.25); z-index:2000; align-items:center; justify-content:center;">
+                <div class="modal-content" style="background:#fff; border-radius:16px; max-width:600px; width:95%; margin:2rem auto; padding:2rem; position:relative; box-shadow:0 8px 32px rgba(39,174,96,0.15);">
+                    <button id="closeAddListingModal" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; color:#64748b; cursor:pointer;">&times;</button>
+                    <h2 style="color:#27ae60; font-weight:800; margin-bottom:1.5rem;">Add New Listing</h2>
+                    <form id="addListingForm" enctype="multipart/form-data">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                            <div>
+                                <label>Title*</label>
+                                <input type="text" name="title" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+                            </div>
+                            <div>
+                                <label>Land Type*</label>
+                                <select name="land_type" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+                                    <option value="">Select type</option>
+                                    <option value="residential">Residential</option>
+                                    <option value="commercial">Commercial</option>
+                                    <option value="agricultural">Agricultural</option>
+                                    <option value="industrial">Industrial</option>
+                                    <option value="mixed">Mixed Use</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label>Description*</label>
+                            <textarea name="description" required rows="3" style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;"></textarea>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                            <div>
+                                <label>District*</label>
+                                <input type="text" name="district" value="Bugesera" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+                            </div>
+                            <div>
+                                <label>Sector*</label>
+                                <input type="text" name="sector" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+                            </div>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                            <div>
+                                <label>Cell*</label>
+                                <input type="text" name="cell" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+                            </div>
+                            <div>
+                                <label>Village*</label>
+                                <input type="text" name="village" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+                            </div>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                            <div>
+                                <label>Land Size*</label>
+                                <input type="number" name="land_size_value" min="1" step="0.01" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+                            </div>
+                            <div>
+                                <label>Unit*</label>
+                                <select name="land_size_unit" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+                                    <option value="sqm">Square Meters</option>
+                                    <option value="hectares">Hectares</option>
+                                    <option value="acres">Acres</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                            <div>
+                                <label>Price*</label>
+                                <input type="number" name="price_amount" min="0" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+                            </div>
+                            <div>
+                                <label>Currency*</label>
+                                <select name="price_currency" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+                                    <option value="RWF">RWF</option>
+                                    <option value="USD">USD</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label><input type="checkbox" name="price_negotiable"> Price is negotiable</label>
+                        </div>
+                        <div style="margin-top:1.5rem; font-weight:600; color:#27ae60;">Landowner Information</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                            <div>
+                                <label>Landowner Name*</label>
+                                <input type="text" name="landowner_name" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+                            </div>
+                            <div>
+                                <label>Landowner Phone*</label>
+                                <input type="tel" name="landowner_phone" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+                            </div>
+                        </div>
+                        <div>
+                            <label>Landowner ID Number*</label>
+                            <input type="text" name="landowner_id_number" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+                        </div>
+                        <div style="margin-top:1.5rem; font-weight:600; color:#27ae60;">Upload Documents & Media</div>
+                        <div style="margin-bottom:1rem;">
+                            <label>Documents (PDF, DOC, Images)</label>
+                            <input type="file" name="documents" multiple accept=".pdf,.doc,.docx,image/*" style="display:block; margin-bottom:0.5rem;">
+                        </div>
+                        <div style="margin-bottom:1rem;">
+                            <label>Images (JPG, PNG, GIF, WEBP)</label>
+                            <input type="file" name="images" multiple accept="image/*" style="display:block; margin-bottom:0.5rem;">
+                        </div>
+                        <div style="margin-bottom:1.5rem;">
+                            <label>Videos (MP4, WebM, MOV)</label>
+                            <input type="file" name="videos" multiple accept="video/*" style="display:block; margin-bottom:0.5rem;">
+                        </div>
+                        <div style="display:flex; gap:1rem; justify-content:flex-end;">
+                            <button type="button" id="cancelAddListing" class="btn btn-outline" style="border-color:#27ae60; color:#27ae60;">Cancel</button>
+                            <button type="submit" class="btn btn-primary" style="background:#27ae60; color:#fff;">Submit</button>
+                        </div>
+                    </form>
                 </div>
             </div>
             <!-- Inquiries Section -->
