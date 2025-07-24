@@ -300,12 +300,12 @@
         </div>
         <nav class="sidebar-nav">
             <ul>
-                <li><a href="#" class="sidebar-link active"><span class="icon">🏠</span><span>Dashboard</span></a></li>
-                <li><a href="#" class="sidebar-link"><span class="icon">📋</span><span>Listings</span></a></li>
-                <li><a href="#" class="sidebar-link"><span class="icon">💬</span><span>Inquiries</span></a></li>
-                <li><a href="#" class="sidebar-link"><span class="icon">📧</span><span>Contacts</span></a></li>
-                <li><a href="#" class="sidebar-link"><span class="icon">👤</span><span>Profile</span></a></li>
-                <li><a href="#" class="sidebar-link"><span class="icon">⚙️</span><span>Settings</span></a></li>
+                <li><a href="#" class="sidebar-link active" data-section="listings"><span class="icon">🏠</span><span>Dashboard</span></a></li>
+                <li><a href="#" class="sidebar-link" data-section="inquiries"><span class="icon">📋</span><span>Listings</span></a></li>
+                <li><a href="#" class="sidebar-link" data-section="contacts"><span class="icon">💬</span><span>Inquiries</span></a></li>
+                <li><a href="#" class="sidebar-link" data-section="profile"><span class="icon">📧</span><span>Contacts</span></a></li>
+                <li><a href="#" class="sidebar-link" data-section="profile"><span class="icon">👤</span><span>Profile</span></a></li>
+                <li><a href="#" class="sidebar-link" data-section="profile"><span class="icon">⚙️</span><span>Settings</span></a></li>
             </ul>
         </nav>
         <div class="sidebar-footer">
@@ -328,42 +328,51 @@
             </div>
         </div>
         <div class="dashboard-content">
-            <!-- Tabs for each section -->
-            <div class="tabs" id="sectionTabs">
-                <button class="tab-btn active">All</button>
-                <button class="tab-btn">Available</button>
-                <button class="tab-btn">Reserved</button>
-                <button class="tab-btn">Sold</button>
+            <!-- Listings Section (default visible) -->
+            <div id="section-listings" class="dashboard-section" style="display: block;">
+                <div class="tabs" id="listingsTabs">
+                    <button class="tab-btn active" data-tab="all">All</button>
+                    <button class="tab-btn" data-tab="available">Available</button>
+                    <button class="tab-btn" data-tab="reserved">Reserved</button>
+                    <button class="tab-btn" data-tab="sold">Sold</button>
+                </div>
+                <div class="card-grid" id="listingsGrid">
+                    <!-- Listing cards will be rendered here by JS -->
+                </div>
             </div>
-            <!-- Card grid for Listings (default) -->
-            <div class="card-grid" id="cardGrid">
-                <!-- Example card -->
-                <div class="dashboard-card">
-                    <div class="card-actions">
-                        <button class="action-btn">⋮</button>
-                    </div>
-                    <div class="card-title">Prime Green Plot in Nyamata</div>
-                    <div class="card-subtitle">Nyamata, Bugesera District</div>
-                    <div class="card-status">Available</div>
-                    <div class="card-date">Dec 05</div>
-                    <div class="card-avatars">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Broker">
-                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Broker">
-                    </div>
+            <!-- Inquiries Section -->
+            <div id="section-inquiries" class="dashboard-section" style="display: none;">
+                <div class="tabs" id="inquiriesTabs">
+                    <button class="tab-btn active" data-tab="all">All</button>
+                    <button class="tab-btn" data-tab="new">New</button>
+                    <button class="tab-btn" data-tab="responded">Responded</button>
+                    <button class="tab-btn" data-tab="closed">Closed</button>
                 </div>
-                <div class="dashboard-card">
-                    <div class="card-actions">
-                        <button class="action-btn">⋮</button>
-                    </div>
-                    <div class="card-title">Commercial Land Near Market</div>
-                    <div class="card-subtitle">Rilima, Bugesera District</div>
-                    <div class="card-status">Reserved</div>
-                    <div class="card-date">Nov 29</div>
-                    <div class="card-avatars">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Broker">
-                    </div>
+                <div class="card-grid" id="inquiriesGrid">
+                    <!-- Inquiry cards will be rendered here by JS -->
                 </div>
-                <!-- More cards as needed -->
+            </div>
+            <!-- Contacts Section -->
+            <div id="section-contacts" class="dashboard-section" style="display: none;">
+                <div class="tabs" id="contactsTabs">
+                    <button class="tab-btn active" data-tab="all">All</button>
+                    <button class="tab-btn" data-tab="new">New</button>
+                    <button class="tab-btn" data-tab="responded">Responded</button>
+                    <button class="tab-btn" data-tab="closed">Closed</button>
+                </div>
+                <div class="card-grid" id="contactsGrid">
+                    <!-- Contact cards will be rendered here by JS -->
+                </div>
+            </div>
+            <!-- Profile Section -->
+            <div id="section-profile" class="dashboard-section" style="display: none;">
+                <div class="tabs" id="profileTabs">
+                    <button class="tab-btn active" data-tab="info">Info</button>
+                    <button class="tab-btn" data-tab="security">Security</button>
+                </div>
+                <div class="card-grid" id="profileGrid">
+                    <!-- Profile info will be rendered here by JS -->
+                </div>
             </div>
         </div>
     </div>

@@ -749,7 +749,125 @@ function showInquiryModal(inquiry) {
 // Initialize dashboard
 let dashboardManager;
 
-document.addEventListener('DOMContentLoaded', () => {
-    dashboardManager = new DashboardManager();
-    window.dashboardManager = dashboardManager;
+document.addEventListener('DOMContentLoaded', function() {
+    // Sidebar navigation
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            const section = this.querySelector('span:last-child').textContent.trim().toLowerCase();
+            showSection(section);
+        });
+    });
+
+    // Section tab navigation
+    document.querySelectorAll('.tabs').forEach(tabGroup => {
+        tabGroup.addEventListener('click', function(e) {
+            if (e.target.classList.contains('tab-btn')) {
+                const tabBtns = this.querySelectorAll('.tab-btn');
+                tabBtns.forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                // Optionally: filter cards here
+            }
+        });
+    });
+
+    // Initial render
+    showSection('listings');
+    renderListings();
+    renderInquiries();
+    renderContacts();
+    renderProfile();
 });
+
+function showSection(section) {
+    document.querySelectorAll('.dashboard-section').forEach(sec => sec.style.display = 'none');
+    const id = `section-${section}`;
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'block';
+    // Optionally: update section title
+}
+
+function renderListings() {
+    const grid = document.getElementById('listingsGrid');
+    if (!grid) return;
+    grid.innerHTML = `
+        <div class="dashboard-card">
+            <div class="card-title">Prime Green Plot in Nyamata</div>
+            <div class="card-subtitle">Nyamata, Bugesera District</div>
+            <div class="card-status">Available</div>
+            <div class="card-date">Dec 05</div>
+            <div class="card-avatars">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Broker">
+                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Broker">
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <div class="card-title">Commercial Land Near Market</div>
+            <div class="card-subtitle">Rilima, Bugesera District</div>
+            <div class="card-status">Reserved</div>
+            <div class="card-date">Nov 29</div>
+            <div class="card-avatars">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Broker">
+            </div>
+        </div>
+    `;
+}
+
+function renderInquiries() {
+    const grid = document.getElementById('inquiriesGrid');
+    if (!grid) return;
+    grid.innerHTML = `
+        <div class="dashboard-card">
+            <div class="card-title">Inquiry from John Doe</div>
+            <div class="card-subtitle">General Interest</div>
+            <div class="card-status">New</div>
+            <div class="card-date">Today</div>
+            <div class="card-avatars">
+                <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Inquirer">
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <div class="card-title">Inquiry from Jane Smith</div>
+            <div class="card-subtitle">Site Visit Request</div>
+            <div class="card-status">Responded</div>
+            <div class="card-date">Yesterday</div>
+            <div class="card-avatars">
+                <img src="https://randomuser.me/api/portraits/women/46.jpg" alt="Inquirer">
+            </div>
+        </div>
+    `;
+}
+
+function renderContacts() {
+    const grid = document.getElementById('contactsGrid');
+    if (!grid) return;
+    grid.innerHTML = `
+        <div class="dashboard-card">
+            <div class="card-title">Contact: Alice M.</div>
+            <div class="card-subtitle">alice@email.com</div>
+            <div class="card-status">New</div>
+            <div class="card-date">2 days ago</div>
+            <div class="card-avatars">
+                <img src="https://randomuser.me/api/portraits/women/47.jpg" alt="Contact">
+            </div>
+        </div>
+    `;
+}
+
+function renderProfile() {
+    const grid = document.getElementById('profileGrid');
+    if (!grid) return;
+    grid.innerHTML = `
+        <div class="dashboard-card">
+            <div class="card-title">Broker Profile</div>
+            <div class="card-subtitle">Name: Broker User</div>
+            <div class="card-status">Active</div>
+            <div class="card-date">Joined: Jan 2024</div>
+            <div class="card-avatars">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Broker">
+            </div>
+        </div>
+    `;
+}
