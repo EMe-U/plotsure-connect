@@ -343,6 +343,15 @@
                     <!-- Listing cards will be rendered here by JS -->
                 </div>
             </div>
+            <!-- View Listing Details Modal -->
+            <div id="viewListingModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.25); z-index:3000; align-items:center; justify-content:center;">
+                <div class="modal-content" style="background:#fff; border-radius:16px; max-width:700px; width:98%; margin:2rem auto; padding:2rem; position:relative; box-shadow:0 8px 32px rgba(39,174,96,0.15); max-height:90vh; overflow-y:auto;">
+                    <button id="closeViewListingModal" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; color:#64748b; cursor:pointer;">&times;</button>
+                    <div id="viewListingContent">
+                        <!-- Listing details will be populated here by JS -->
+                    </div>
+                </div>
+            </div>
             <!-- Add Listing Modal -->
             <div id="addListingModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.25); z-index:2000; align-items:center; justify-content:center;">
                 <div class="modal-content" style="background:#fff; border-radius:16px; max-width:600px; width:95%; margin:2rem auto; padding:2rem; position:relative; box-shadow:0 8px 32px rgba(39,174,96,0.15);">

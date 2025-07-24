@@ -1,3 +1,15 @@
+// Step 2: Protect the dashboard
+const token = localStorage.getItem('token');
+if (!token) {
+  window.location.href = '/admin/login.html'; // Redirect to login if not authenticated
+}
+
+// Logout function (can be called from a button)
+window.logout = function() {
+  localStorage.removeItem('token');
+  window.location.href = '/admin/login.html';
+};
+
 // Dashboard Management
 class DashboardManager {
     constructor() {
@@ -750,6 +762,60 @@ function showInquiryModal(inquiry) {
 let dashboardManager;
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Modal open/close logic
+    const addListingBtn = document.getElementById('addListingBtn');
+    const addListingModal = document.getElementById('addListingModal');
+    const closeAddListingModal = document.getElementById('closeAddListingModal');
+    const cancelAddListing = document.getElementById('cancelAddListing');
+    const addListingForm = document.getElementById('addListingForm');
+
+    function openModal() {
+        addListingModal.style.display = 'flex';
+    }
+    function closeModal() {
+        addListingModal.style.display = 'none';
+        addListingForm.reset();
+    }
+    if (addListingBtn) addListingBtn.addEventListener('click', openModal);
+    if (closeAddListingModal) closeAddListingModal.addEventListener('click', closeModal);
+    if (cancelAddListing) cancelAddListing.addEventListener('click', closeModal);
+    window.addEventListener('click', function(e) {
+        if (e.target === addListingModal) closeModal();
+    });
+
+    // Handle Add Listing form submission
+    if (addListingForm) {
+        addListingForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            // Show loading (simple way)
+            const submitBtn = addListingForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            const formData = new FormData(addListingForm);
+            try {
+                const response = await authFetch('/api/listings', {
+                    method: 'POST',
+                    body: formData,
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Listing created successfully!');
+                    closeModal();
+                    // Optionally refresh listings
+                    if (typeof renderListings === 'function') renderListings();
+                } else {
+                    alert(result.message || 'Failed to create listing.');
+                }
+            } catch (err) {
+                alert('Error submitting listing.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit';
+            }
+        });
+    }
+
     // Sidebar navigation
     document.querySelectorAll('.sidebar-link').forEach(link => {
         link.addEventListener('click', function(e) {
@@ -792,28 +858,331 @@ function showSection(section) {
 function renderListings() {
     const grid = document.getElementById('listingsGrid');
     if (!grid) return;
-    grid.innerHTML = `
-        <div class="dashboard-card">
-            <div class="card-title">Prime Green Plot in Nyamata</div>
-            <div class="card-subtitle">Nyamata, Bugesera District</div>
-            <div class="card-status">Available</div>
-            <div class="card-date">Dec 05</div>
-            <div class="card-avatars">
-                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Broker">
-                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Broker">
+    authFetch('/api/listings')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success || !data.data || !data.data.listings) {
+                grid.innerHTML = '<div>No listings found.</div>';
+                return;
+            }
+            const listings = data.data.listings;
+            grid.innerHTML = listings.map((listing, idx) => {
+                // Primary image
+                let primaryImg = '';
+                if (listing.media && listing.media.length > 0) {
+                    const primary = listing.media.find(m => m.media_type === 'image' && m.is_primary) || listing.media.find(m => m.media_type === 'image');
+                    if (primary) {
+                        primaryImg = `<img src="/uploads/images/${primary.file_name}" alt="${listing.title}" style="width:100%; height:160px; object-fit:cover; border-radius:10px 10px 0 0;">`;
+                    }
+                }
+                if (!primaryImg) {
+                    primaryImg = `<div style="width:100%; height:160px; background:#e6f9e6; display:flex; align-items:center; justify-content:center; font-size:2.5rem; color:#27ae60; border-radius:10px 10px 0 0;">🏞️</div>`;
+                }
+                // Thumbnails for images
+                let imageThumbs = '';
+                if (listing.media && listing.media.length > 1) {
+                    imageThumbs = '<div style="display:flex; gap:4px; margin-top:6px;">' +
+                        listing.media.filter(m => m.media_type === 'image').map(m =>
+                            `<img src="/uploads/images/${m.file_name}" alt="thumb" style="width:36px; height:36px; object-fit:cover; border-radius:6px;">`
+                        ).join('') + '</div>';
+                }
+                // Video thumbnails/links
+                let videoLinks = '';
+                if (listing.media && listing.media.some(m => m.media_type === 'video')) {
+                    videoLinks = '<div style="margin-top:8px;">' +
+                        listing.media.filter(m => m.media_type === 'video').map(m =>
+                            `<a href="/uploads/videos/${m.file_name}" target="_blank" style="margin-right:8px; color:#27ae60; text-decoration:underline;">🎬 Video</a>`
+                        ).join('') + '</div>';
+                }
+                // Document links
+                let docLinks = '';
+                if (listing.documents && listing.documents.length > 0) {
+                    docLinks = '<div style="margin-top:8px;">' +
+                        listing.documents.map(doc =>
+                            `<a href="/uploads/documents/${doc.file_name}" target="_blank" style="margin-right:8px; color:#219150; text-decoration:underline;">📄 ${doc.name}</a>`
+                        ).join('') + '</div>';
+                }
+                // Edit and Delete buttons
+                let editBtn = `<button class="btn btn-outline btn-edit-listing" data-idx="${idx}" style="border-color:#27ae60; color:#27ae60; float:right; margin-top:8px; margin-right:8px;">Edit</button>`;
+                let deleteBtn = `<button class="btn btn-outline btn-delete-listing" data-id="${listing.id}" style="border-color:#ef4444; color:#ef4444; float:right; margin-top:8px;">Delete</button>`;
+                // Card click handler: add data-idx for lookup
+                return `
+                <div class="dashboard-card listing-card" data-idx="${idx}" style="cursor:pointer; position:relative;">
+                    ${editBtn}
+                    ${deleteBtn}
+                    ${primaryImg}
+                    <div class="card-title">${listing.title}</div>
+                    <div class="card-subtitle">${listing.sector}, ${listing.district}</div>
+                    <div class="card-status">${listing.status || 'Available'}</div>
+                    <div class="card-date">${new Date(listing.created_at).toLocaleDateString()}</div>
+                    ${imageThumbs}
+                    ${videoLinks}
+                    ${docLinks}
+                    <div class="card-avatars" style="margin-top:10px;">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Broker">
+                    </div>
+                </div>
+                `;
+            }).join('');
+            // Add click listeners for each card
+            document.querySelectorAll('.listing-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Prevent click if Edit or Delete button was clicked
+                    if (e.target.classList.contains('btn-delete-listing') || e.target.classList.contains('btn-edit-listing')) return;
+                    const idx = this.getAttribute('data-idx');
+                    showListingDetails(listings[idx]);
+                });
+            });
+            // Add delete listeners
+            document.querySelectorAll('.btn-delete-listing').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const id = this.getAttribute('data-id');
+                    deleteListing(id);
+                });
+            });
+            // Add edit listeners
+            document.querySelectorAll('.btn-edit-listing').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const idx = this.getAttribute('data-idx');
+                    openEditListingModal(listings[idx]);
+                });
+            });
+        })
+        .catch(() => {
+            grid.innerHTML = '<div>Error loading listings.</div>';
+        });
+}
+
+// Edit button in details modal
+function showListingDetails(listing) {
+    const modal = document.getElementById('viewListingModal');
+    const content = document.getElementById('viewListingContent');
+    if (!modal || !content) return;
+    // Build details HTML
+    let images = '';
+    if (listing.media && listing.media.some(m => m.media_type === 'image')) {
+        images = '<div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:1rem;">' +
+            listing.media.filter(m => m.media_type === 'image').map(m =>
+                `<img src="/uploads/images/${m.file_name}" alt="img" style="width:120px; height:90px; object-fit:cover; border-radius:8px;">`
+            ).join('') + '</div>';
+    }
+    let videos = '';
+    if (listing.media && listing.media.some(m => m.media_type === 'video')) {
+        videos = '<div style="margin-bottom:1rem;">' +
+            listing.media.filter(m => m.media_type === 'video').map(m =>
+                `<video src="/uploads/videos/${m.file_name}" controls style="width:180px; height:120px; border-radius:8px; margin-right:8px; margin-bottom:8px;"></video>`
+            ).join('') + '</div>';
+    }
+    let docs = '';
+    if (listing.documents && listing.documents.length > 0) {
+        docs = '<div style="margin-bottom:1rem;">' +
+            listing.documents.map(doc =>
+                `<a href="/uploads/documents/${doc.file_name}" target="_blank" style="margin-right:12px; color:#219150; text-decoration:underline;">📄 ${doc.name}</a>`
+            ).join('') + '</div>';
+    }
+    // Edit and Delete buttons in modal
+    let editBtn = `<button class="btn btn-outline btn-edit-listing-modal" data-id="${listing.id}" style="border-color:#27ae60; color:#27ae60; float:right; margin-bottom:1rem; margin-right:8px;">Edit</button>`;
+    let deleteBtn = `<button class="btn btn-outline btn-delete-listing-modal" data-id="${listing.id}" style="border-color:#ef4444; color:#ef4444; float:right; margin-bottom:1rem;">Delete</button>`;
+    content.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 style="color:#27ae60; font-weight:800; margin-bottom:0.5rem;">${listing.title}</h2>
+            <div>${editBtn}${deleteBtn}</div>
+        </div>
+        <div style="color:#475569; margin-bottom:1rem;">${listing.sector}, ${listing.cell}, ${listing.village}, ${listing.district}</div>
+        <div style="margin-bottom:1rem;">${listing.description}</div>
+        <div style="margin-bottom:1rem;"><b>Land Size:</b> ${listing.land_size_value} ${listing.land_size_unit} &nbsp; <b>Price:</b> ${listing.price_amount} ${listing.price_currency} ${listing.price_negotiable ? '(Negotiable)' : ''}</div>
+        <div style="margin-bottom:1rem;"><b>Landowner:</b> ${listing.landowner_name} &nbsp; <b>Phone:</b> ${listing.landowner_phone} &nbsp; <b>ID:</b> ${listing.landowner_id_number}</div>
+        <div style="margin-bottom:1rem;"><b>Status:</b> ${listing.status || 'Available'} &nbsp; <b>Created:</b> ${new Date(listing.created_at).toLocaleDateString()}</div>
+        ${images}
+        ${videos}
+        ${docs}
+    `;
+    modal.style.display = 'flex';
+    // Add delete listener in modal
+    const deleteBtnModal = document.querySelector('.btn-delete-listing-modal');
+    if (deleteBtnModal) {
+        deleteBtnModal.addEventListener('click', function() {
+            deleteListing(listing.id);
+        });
+    }
+    // Add edit listener in modal
+    const editBtnModal = document.querySelector('.btn-edit-listing-modal');
+    if (editBtnModal) {
+        editBtnModal.addEventListener('click', function() {
+            openEditListingModal(listing);
+        });
+    }
+}
+
+// Open Edit Listing modal and populate form
+function openEditListingModal(listing) {
+    const modal = document.getElementById('editListingModal');
+    const form = document.getElementById('editListingForm');
+    if (!modal || !form) return;
+    // Build form fields (similar to Add Listing, pre-filled)
+    form.innerHTML = `
+        <input type="hidden" name="id" value="${listing.id}">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div>
+                <label>Title*</label>
+                <input type="text" name="title" required value="${listing.title || ''}" style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+            </div>
+            <div>
+                <label>Land Type*</label>
+                <select name="land_type" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+                    <option value="">Select type</option>
+                    <option value="residential" ${listing.land_type === 'residential' ? 'selected' : ''}>Residential</option>
+                    <option value="commercial" ${listing.land_type === 'commercial' ? 'selected' : ''}>Commercial</option>
+                    <option value="agricultural" ${listing.land_type === 'agricultural' ? 'selected' : ''}>Agricultural</option>
+                    <option value="industrial" ${listing.land_type === 'industrial' ? 'selected' : ''}>Industrial</option>
+                    <option value="mixed" ${listing.land_type === 'mixed' ? 'selected' : ''}>Mixed Use</option>
+                </select>
             </div>
         </div>
-        <div class="dashboard-card">
-            <div class="card-title">Commercial Land Near Market</div>
-            <div class="card-subtitle">Rilima, Bugesera District</div>
-            <div class="card-status">Reserved</div>
-            <div class="card-date">Nov 29</div>
-            <div class="card-avatars">
-                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Broker">
+        <div>
+            <label>Description*</label>
+            <textarea name="description" required rows="3" style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">${listing.description || ''}</textarea>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div>
+                <label>District*</label>
+                <input type="text" name="district" value="${listing.district || 'Bugesera'}" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
             </div>
+            <div>
+                <label>Sector*</label>
+                <input type="text" name="sector" value="${listing.sector || ''}" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+            </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div>
+                <label>Cell*</label>
+                <input type="text" name="cell" value="${listing.cell || ''}" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+            </div>
+            <div>
+                <label>Village*</label>
+                <input type="text" name="village" value="${listing.village || ''}" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+            </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div>
+                <label>Land Size*</label>
+                <input type="number" name="land_size_value" min="1" step="0.01" value="${listing.land_size_value || ''}" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+            </div>
+            <div>
+                <label>Unit*</label>
+                <select name="land_size_unit" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+                    <option value="sqm" ${listing.land_size_unit === 'sqm' ? 'selected' : ''}>Square Meters</option>
+                    <option value="hectares" ${listing.land_size_unit === 'hectares' ? 'selected' : ''}>Hectares</option>
+                    <option value="acres" ${listing.land_size_unit === 'acres' ? 'selected' : ''}>Acres</option>
+                </select>
+            </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div>
+                <label>Price*</label>
+                <input type="number" name="price_amount" min="0" value="${listing.price_amount || ''}" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+            </div>
+            <div>
+                <label>Currency*</label>
+                <select name="price_currency" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+                    <option value="RWF" ${listing.price_currency === 'RWF' ? 'selected' : ''}>RWF</option>
+                    <option value="USD" ${listing.price_currency === 'USD' ? 'selected' : ''}>USD</option>
+                </select>
+            </div>
+        </div>
+        <div>
+            <label><input type="checkbox" name="price_negotiable" ${listing.price_negotiable ? 'checked' : ''}> Price is negotiable</label>
+        </div>
+        <div style="margin-top:1.5rem; font-weight:600; color:#27ae60;">Landowner Information</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div>
+                <label>Landowner Name*</label>
+                <input type="text" name="landowner_name" value="${listing.landowner_name || ''}" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+            </div>
+            <div>
+                <label>Landowner Phone*</label>
+                <input type="tel" name="landowner_phone" value="${listing.landowner_phone || ''}" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+            </div>
+        </div>
+        <div>
+            <label>Landowner ID Number*</label>
+            <input type="text" name="landowner_id_number" value="${listing.landowner_id_number || ''}" required style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:1rem;">
+        </div>
+        <div style="margin-top:1.5rem; font-weight:600; color:#27ae60;">Upload Documents & Media (leave blank to keep existing)</div>
+        <div style="margin-bottom:1rem;">
+            <label>Documents (PDF, DOC, Images)</label>
+            <input type="file" name="documents" multiple accept=".pdf,.doc,.docx,image/*" style="display:block; margin-bottom:0.5rem;">
+        </div>
+        <div style="margin-bottom:1rem;">
+            <label>Images (JPG, PNG, GIF, WEBP)</label>
+            <input type="file" name="images" multiple accept="image/*" style="display:block; margin-bottom:0.5rem;">
+        </div>
+        <div style="margin-bottom:1.5rem;">
+            <label>Videos (MP4, WebM, MOV)</label>
+            <input type="file" name="videos" multiple accept="video/*" style="display:block; margin-bottom:0.5rem;">
+        </div>
+        <div style="display:flex; gap:1rem; justify-content:flex-end;">
+            <button type="button" id="cancelEditListing" class="btn btn-outline" style="border-color:#27ae60; color:#27ae60;">Cancel</button>
+            <button type="submit" class="btn btn-primary" style="background:#27ae60; color:#fff;">Update</button>
         </div>
     `;
+    modal.style.display = 'flex';
+    // Close/cancel logic
+    const closeBtn = document.getElementById('closeEditListingModal');
+    const cancelBtn = document.getElementById('cancelEditListing');
+    if (closeBtn) closeBtn.onclick = () => { modal.style.display = 'none'; };
+    if (cancelBtn) cancelBtn.onclick = () => { modal.style.display = 'none'; };
 }
+
+// Edit Listing form submission
+(function() {
+    const modal = document.getElementById('editListingModal');
+    const form = document.getElementById('editListingForm');
+    if (!form) return;
+    form.onsubmit = async function(e) {
+        e.preventDefault();
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Updating...';
+        const id = form.querySelector('input[name="id"]').value;
+        const formData = new FormData(form);
+        try {
+            const response = await authFetch(`/api/listings/${id}`, {
+                method: 'PUT',
+                body: formData,
+            });
+            const result = await response.json();
+            if (result.success) {
+                alert('Listing updated successfully!');
+                modal.style.display = 'none';
+                renderListings();
+            } else {
+                alert(result.message || 'Failed to update listing.');
+            }
+        } catch (err) {
+            alert('Error updating listing.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Update';
+        }
+    };
+})();
+
+// Close modal logic
+(function() {
+    const modal = document.getElementById('viewListingModal');
+    const closeBtn = document.getElementById('closeViewListingModal');
+    if (closeBtn && modal) {
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+    }
+    window.addEventListener('click', function(e) {
+        if (e.target === modal) modal.style.display = 'none';
+    });
+})();
 
 function renderInquiries() {
     const grid = document.getElementById('inquiriesGrid');
