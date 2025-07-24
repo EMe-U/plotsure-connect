@@ -34,8 +34,13 @@
       const data = await res.json();
       if (data.success && data.token) {
         localStorage.setItem('token', data.token);
-        window.location.href = '/admin/dashboard'; // Redirect to dashboard
+        document.getElementById('loginError').style.color = '#27ae60';
+        document.getElementById('loginError').textContent = 'Login successful! Redirecting...';
+        setTimeout(() => {
+          window.location.href = '/admin/dashboard';
+        }, 800);
       } else {
+        document.getElementById('loginError').style.color = '#ef4444';
         document.getElementById('loginError').textContent = data.message || 'Login failed';
       }
     };
