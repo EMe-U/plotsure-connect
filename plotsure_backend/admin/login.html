@@ -34,7 +34,7 @@
       const data = await res.json();
       if (data.success && data.token) {
         localStorage.setItem('token', data.token);
-          window.location.href = '/admin/dashboard';
+          window.location.href = '/admin/dashboard.html';
       } else {
         document.getElementById('loginError').textContent = data.message || 'Login failed';
       }
