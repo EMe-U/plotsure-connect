@@ -121,7 +121,7 @@ exports.login = async (req, res) => {
 
     // Remove password from response
     const userResponse = user.toJSON();
-
+    console.log('You\'re logged in successfully');
     res.status(200).json({
       success: true,
       message: 'Login successful',
