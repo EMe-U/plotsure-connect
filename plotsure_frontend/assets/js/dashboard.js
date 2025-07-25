@@ -822,8 +822,21 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
             this.classList.add('active');
-            const section = this.querySelector('span:last-child').textContent.trim().toLowerCase();
-            showSection(section);
+            // Map sidebar link text to section id
+            const sectionMap = {
+                'Dashboard': 'listings',
+                'Listings': 'listings',
+                'Inquiries': 'inquiries',
+                'Contacts': 'contacts',
+                'Profile': 'profile'
+            };
+            // Get the visible text (second span)
+            const sectionText = this.querySelector('span:last-child').textContent.trim();
+            const sectionKey = sectionMap[sectionText] || 'listings';
+            showSection(sectionKey);
+            // Update top bar title
+            const sectionTitle = document.getElementById('sectionTitle');
+            if (sectionTitle) sectionTitle.textContent = sectionText;
         });
     });
 
