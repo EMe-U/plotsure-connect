@@ -1,6 +1,8 @@
+const s3Helper = require('../config/s3');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const stream = require('stream');
 
 // Ensure upload directories exist
 const ensureDirectoryExists = (dirPath) => {
@@ -38,35 +40,29 @@ const generateFilename = (originalname) => {
   return `${nameWithoutExt}_${timestamp}_${random}${extension}`;
 };
 
-// Storage configuration for documents
-const documentStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDirs.documents);
-  },
-  filename: (req, file, cb) => {
-    cb(null, generateFilename(file.originalname));
-  }
-});
+// S3 upload handler for documents, images, videos
+const s3UploadHandler = (fieldName, allowedTypes, maxSize) => {
+  return multer({
+    storage: multer.memoryStorage(),
+    fileFilter: fileFilter(allowedTypes),
+    limits: { fileSize: maxSize }
+  }).array(fieldName, 10);
+};
 
-// Storage configuration for images
-const imageStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDirs.images);
-  },
-  filename: (req, file, cb) => {
-    cb(null, generateFilename(file.originalname));
+// Helper to upload files to S3 after multer parses them
+async function uploadFilesToS3(files, folder) {
+  const uploaded = [];
+  for (const file of files) {
+    const key = `${folder}/${Date.now()}_${file.originalname}`;
+    const result = await s3Helper.uploadFile(file.buffer, key, file.mimetype);
+    uploaded.push({
+      ...file,
+      s3Key: key,
+      s3Url: result.Location
+    });
   }
-});
-
-// Storage configuration for videos
-const videoStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDirs.videos);
-  },
-  filename: (req, file, cb) => {
-    cb(null, generateFilename(file.originalname));
-  }
-});
+  return uploaded;
+}
 
 // File type configurations
 const documentTypes = [
@@ -102,7 +98,14 @@ const fileSizeLimits = {
 
 // Upload middleware for documents
 exports.uploadDocuments = multer({
-  storage: documentStorage,
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, uploadDirs.documents);
+    },
+    filename: (req, file, cb) => {
+      cb(null, generateFilename(file.originalname));
+    }
+  }),
   fileFilter: fileFilter(documentTypes),
   limits: {
     fileSize: fileSizeLimits.documents
@@ -111,7 +114,14 @@ exports.uploadDocuments = multer({
 
 // Upload middleware for images
 exports.uploadImages = multer({
-  storage: imageStorage,
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, uploadDirs.images);
+    },
+    filename: (req, file, cb) => {
+      cb(null, generateFilename(file.originalname));
+    }
+  }),
   fileFilter: fileFilter(imageTypes),
   limits: {
     fileSize: fileSizeLimits.images
@@ -120,7 +130,14 @@ exports.uploadImages = multer({
 
 // Upload middleware for videos
 exports.uploadVideos = multer({
-  storage: videoStorage,
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, uploadDirs.videos);
+    },
+    filename: (req, file, cb) => {
+      cb(null, generateFilename(file.originalname));
+    }
+  }),
   fileFilter: fileFilter(videoTypes),
   limits: {
     fileSize: fileSizeLimits.videos

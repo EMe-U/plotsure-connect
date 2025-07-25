@@ -8,6 +8,7 @@ const Inquiry = require('./Inquiry')(sequelize, DataTypes);
 const Contact = require('./Contact')(sequelize, DataTypes);
 const Document = require('./Document')(sequelize, DataTypes);
 const Media = require('./Media')(sequelize, DataTypes);
+const ActivityLog = require('./ActivityLog')(sequelize);
 
 // Define associations
 User.hasMany(Listing, {
@@ -52,6 +53,9 @@ Media.belongsTo(Listing, {
     as: 'listing'
 });
 
+// Add association
+ActivityLog.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+
 // Export models and sequelize instance
 module.exports = {
     sequelize,
@@ -60,5 +64,6 @@ module.exports = {
     Inquiry,
     Contact,
     Document,
-    Media
+    Media,
+    ActivityLog
 };

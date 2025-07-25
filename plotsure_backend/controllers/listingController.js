@@ -1,4 +1,4 @@
-const { Listing, Document, Media, User, Inquiry } = require('../models');
+const { Listing, Document, Media, User, Inquiry, ActivityLog } = require('../models');
 const { validationResult } = require('express-validator');
 const { Op } = require('sequelize');
 const fileHelper = require('../utils/fileHelper');
@@ -256,6 +256,15 @@ exports.createListing = async (req, res) => {
       data: { listing: completeListing }
     });
 
+    // Log activity
+    await ActivityLog.create({
+      user_id: req.user.id,
+      action: 'create',
+      entity: 'listing',
+      entity_id: listing.id,
+      details: JSON.stringify({ title: listing.title })
+    });
+
   } catch (error) {
     console.error('Create listing error:', error);
     res.status(500).json({
@@ -280,7 +289,12 @@ exports.updateListing = async (req, res) => {
       });
     }
 
-    const listing = await Listing.findByPk(id);
+    const listing = await Listing.findByPk(id, {
+      include: [
+        { model: Document, as: 'documents' },
+        { model: Media, as: 'media' }
+      ]
+    });
     if (!listing) {
       return res.status(404).json({
         success: false,
@@ -296,8 +310,97 @@ exports.updateListing = async (req, res) => {
       });
     }
 
-    // Update listing
+    // Remove media/documents if requested
+    const removeImages = req.body.remove_images ? JSON.parse(req.body.remove_images) : [];
+    const removeVideos = req.body.remove_videos ? JSON.parse(req.body.remove_videos) : [];
+    const removeDocuments = req.body.remove_documents ? JSON.parse(req.body.remove_documents) : [];
+    const filePathsToDelete = [];
+    // Remove images
+    if (removeImages.length > 0) {
+      const images = listing.media.filter(m => m.media_type === 'image' && removeImages.includes(m.id.toString()));
+      for (const img of images) {
+        filePathsToDelete.push(img.file_path);
+        await img.destroy();
+      }
+    }
+    // Remove videos
+    if (removeVideos.length > 0) {
+      const videos = listing.media.filter(m => m.media_type === 'video' && removeVideos.includes(m.id.toString()));
+      for (const vid of videos) {
+        filePathsToDelete.push(vid.file_path);
+        await vid.destroy();
+      }
+    }
+    // Remove documents
+    if (removeDocuments.length > 0) {
+      const docs = listing.documents.filter(d => removeDocuments.includes(d.id.toString()));
+      for (const doc of docs) {
+        filePathsToDelete.push(doc.file_path);
+        await doc.destroy();
+      }
+    }
+    // Delete files from storage (async, don't block response)
+    if (filePathsToDelete.length > 0) {
+      fileHelper.deleteFiles(filePathsToDelete).catch(err =>
+        console.error('Failed to delete some files:', err)
+      );
+    }
+
+    // Update listing fields
     await listing.update(req.body);
+
+    // Handle new file uploads as before
+    if (req.files) {
+      // Documents
+      if (req.files.documents && req.files.documents.length > 0) {
+        const documentPromises = req.files.documents.map(file => {
+          return Document.create({
+            listing_id: listing.id,
+            name: file.originalname,
+            document_type: req.body.document_types?.[file.fieldname] || 'other',
+            file_path: file.path,
+            file_name: file.filename,
+            file_size: file.size,
+            file_type: file.mimetype
+          });
+        });
+        await Promise.all(documentPromises);
+      }
+      // Images
+      if (req.files.images && req.files.images.length > 0) {
+        const imagePromises = req.files.images.map((file, index) => {
+          return Media.create({
+            listing_id: listing.id,
+            media_type: 'image',
+            file_name: file.filename,
+            file_path: file.path,
+            file_size: file.size,
+            file_type: file.mimetype,
+            is_primary: false,
+            display_order: index
+          });
+        });
+        await Promise.all(imagePromises);
+      }
+      // Videos
+      if (req.files.videos && req.files.videos.length > 0) {
+        const videoPromises = req.files.videos.map((file, index) => {
+          return Media.create({
+            listing_id: listing.id,
+            media_type: 'video',
+            file_name: file.filename,
+            file_path: file.path,
+            file_size: file.size,
+            file_type: file.mimetype,
+            display_order: index
+          });
+        });
+        await Promise.all(videoPromises);
+      }
+    }
+
+    // Log the edit action (simple console log, replace with DB log if needed)
+    console.log(`User ${req.user.id} edited listing ${listing.id} at ${new Date().toISOString()}`);
 
     // Get updated listing with associations
     const updatedListing = await Listing.findByPk(id, {
@@ -312,6 +415,15 @@ exports.updateListing = async (req, res) => {
       success: true,
       message: 'Listing updated successfully',
       data: { listing: updatedListing }
+    });
+
+    // Log activity
+    await ActivityLog.create({
+      user_id: req.user.id,
+      action: 'update',
+      entity: 'listing',
+      entity_id: listing.id,
+      details: JSON.stringify({ updated: true })
     });
 
   } catch (error) {
@@ -369,6 +481,15 @@ exports.deleteListing = async (req, res) => {
     res.status(200).json({
       success: true,
       message: 'Listing deleted successfully'
+    });
+
+    // Log activity
+    await ActivityLog.create({
+      user_id: req.user.id,
+      action: 'delete',
+      entity: 'listing',
+      entity_id: listing.id,
+      details: JSON.stringify({ deleted: true })
     });
 
   } catch (error) {

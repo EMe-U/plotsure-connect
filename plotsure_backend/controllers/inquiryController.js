@@ -1,4 +1,4 @@
-const { Inquiry, Listing, User } = require('../models');
+const { Inquiry, Listing, User, ActivityLog } = require('../models');
 const { validationResult } = require('express-validator');
 const { Op } = require('sequelize');
 const emailService = require('../utils/emailService');
@@ -94,6 +94,15 @@ exports.createInquiry = async (req, res) => {
           required: false
         }
       ]
+    });
+
+    // Log activity
+    await ActivityLog.create({
+      user_id: req.user ? req.user.id : null,
+      action: 'create',
+      entity: 'inquiry',
+      entity_id: inquiry.id,
+      details: JSON.stringify({ inquirer_name: inquiry.inquirer_name, inquiry_type: inquiry.inquiry_type })
     });
 
     res.status(201).json({
